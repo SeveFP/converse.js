@@ -1,5 +1,7 @@
 # converse.js
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/jcbrand/converse.js.svg)](https://greenkeeper.io/)
+
 [![Travis](https://api.travis-ci.org/jcbrand/converse.js.png?branch=master)](https://travis-ci.org/jcbrand/converse.js)
 [![Bountysource bounties](https://img.shields.io/bountysource/team/converse.js/activity.svg?maxAge=2592000)](https://www.bountysource.com/teams/converse.js/issues?tracker_ids=194169)
 [![Translation status](https://hosted.weblate.org/widgets/conversejs/-/svg-badge.svg)](https://hosted.weblate.org/engage/conversejs/?utm_source=widget)
@@ -9,6 +11,8 @@
 It enables you to add chat functionality to your website, independent of
 any specific backend. You will however need an XMPP server to connect
 to, either your own, or a public one.
+
+Please support this project via [Patreon](https://www.patreon.com/jcbrand) or [Liberapay](https://liberapay.com/jcbrand)
 
 ## Demo
 

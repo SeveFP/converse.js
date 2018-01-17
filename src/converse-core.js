@@ -16,8 +16,8 @@
             "strophe",
             "pluggable",
             "backbone.noconflict",
-            "backbone.browserStorage",
-            "backbone.overview",
+            "backbone.nativeview",
+            "backbone.browserStorage"
     ], factory);
 }(this, function (sizzle, Promise, _, polyfill, i18n, utils, moment, Strophe, pluggable, Backbone) {
 
@@ -36,13 +36,14 @@
     Strophe.addNamespace('CHATSTATES', 'http://jabber.org/protocol/chatstates');
     Strophe.addNamespace('CSI', 'urn:xmpp:csi:0');
     Strophe.addNamespace('DELAY', 'urn:xmpp:delay');
+    Strophe.addNamespace('FORWARD', 'urn:xmpp:forward:0');
     Strophe.addNamespace('HINTS', 'urn:xmpp:hints');
     Strophe.addNamespace('MAM', 'urn:xmpp:mam:2');
-    Strophe.addNamespace('SID', 'urn:xmpp:sid:0');
     Strophe.addNamespace('NICK', 'http://jabber.org/protocol/nick');
     Strophe.addNamespace('PUBSUB', 'http://jabber.org/protocol/pubsub');
     Strophe.addNamespace('ROSTERX', 'http://jabber.org/protocol/rosterx');
     Strophe.addNamespace('RSM', 'http://jabber.org/protocol/rsm');
+    Strophe.addNamespace('SID', 'urn:xmpp:sid:0');
     Strophe.addNamespace('XFORM', 'jabber:x:data');
 
     // Use Mustache style syntax for variable interpolation
@@ -129,7 +130,7 @@
         7: 'DISCONNECTING',
         8: 'ATTACHED',
         9: 'REDIRECT',
-       10: 'RECONNECTING'
+       10: 'RECONNECTING',
     };
 
     _converse.DEFAULT_IMAGE_TYPE = 'image/png';
@@ -171,8 +172,6 @@
         } else if (level === Strophe.LogLevel.WARN) {
             if (_converse.debug) {
                 logger.warn(`${prefix} ${moment().format()} WARNING: ${message}`, style);
-            } else {
-                logger.warn(`${prefix} WARNING: ${message}`, style);
             }
         } else if (level === Strophe.LogLevel.FATAL) {
             if (_converse.debug) {
@@ -250,7 +249,9 @@
             // out or disconnecting in the previous session.
             // This happens in tests. We therefore first clean up.
             Backbone.history.stop();
+            _converse.chatboxviews.closeAllChatBoxes();
             delete _converse.controlboxtoggle;
+            delete _converse.chatboxviews;
             _converse.connection.reset();
             _converse.off();
             _converse.stopListening();
@@ -581,8 +582,8 @@
             } else if (status === Strophe.Status.CONNFAIL) {
                 let feedback = message;
                 if (message === "host-unknown" || message == "remote-connection-failed") {
-                    feedback = __("Sorry, we could not connect to the XMPP host with domain: ") +
-                        `\"${Strophe.getDomainFromJid(_converse.connection.jid)}\"`;
+                    feedback = __("Sorry, we could not connect to the XMPP host with domain: %1$s",
+                        `\"${Strophe.getDomainFromJid(_converse.connection.jid)}\"`);
                 } else if (!_.isUndefined(message) && message === _.get(Strophe, 'ErrorCondition.NO_AUTH_MECH')) {
                     feedback = __("The XMPP server did not offer a supported authentication mechanism");
                 }
@@ -760,7 +761,10 @@
                     .then(() => {
                         _converse.emit('rosterContactsFetched');
                         _converse.sendInitialPresence();
-                    }).catch(_converse.sendInitialPresence);
+                    }).catch((reason) => {
+                        _converse.log(reason, Strophe.LogLevel.ERROR);
+                        _converse.sendInitialPresence();
+                    });
             } else {
                 _converse.rostergroups.fetchRosterGroups().then(() => {
                     _converse.emit('rosterGroupsFetched');
@@ -768,7 +772,8 @@
                 }).then(() => {
                     _converse.emit('rosterContactsFetched');
                     _converse.sendInitialPresence();
-                }).catch(() => {
+                }).catch((reason) => {
+                    _converse.log(reason, Strophe.LogLevel.ERROR);
                     _converse.sendInitialPresence();
                 });
             }
@@ -1106,7 +1111,8 @@
                  */
                 return new Promise((resolve, reject) => {
                     this.fetch({
-                        add: true,
+                        'add': true,
+                        'silent': true,
                         success (collection) {
                             if (collection.length === 0) {
                                 _converse.send_initial_presence = true;
@@ -1426,6 +1432,7 @@
 
 
         this.RosterGroup = Backbone.Model.extend({
+
             initialize (attributes) {
                 this.set(_.assignIn({
                     description: __('Click to hide these contacts'),
@@ -1458,128 +1465,9 @@
         });
 
 
-        this.Message = Backbone.Model.extend({
-            defaults(){
-                return {
-                    msgid: _converse.connection.getUniqueId()
-                };
-            }
-        });
-
-        this.Messages = Backbone.Collection.extend({
-            model: _converse.Message,
-            comparator: 'time'
-        });
-
-        this.ChatBox = Backbone.Model.extend({
-            defaults: {
-                'type': 'chatbox',
-                'bookmarked': false,
-                'chat_state': undefined,
-                'num_unread': 0,
-                'url': ''
-            },
-
-            initialize () {
-                this.messages = new _converse.Messages();
-                this.messages.browserStorage = new Backbone.BrowserStorage[_converse.message_storage](
-                    b64_sha1(`converse.messages${this.get('jid')}${_converse.bare_jid}`));
-                this.save({
-                    // The chat_state will be set to ACTIVE once the chat box is opened
-                    // and we listen for change:chat_state, so shouldn't set it to ACTIVE here.
-                    'box_id' : b64_sha1(this.get('jid')),
-                    'time_opened': this.get('time_opened') || moment().valueOf(),
-                    'user_id' : Strophe.getNodeFromJid(this.get('jid'))
-                });
-            },
-
-            getMessageBody (message) {
-                const type = message.getAttribute('type');
-                return (type === 'error') ?
-                    _.propertyOf(message.querySelector('error text'))('textContent') :
-                        _.propertyOf(message.querySelector('body'))('textContent');
-            },
-
-            getMessageAttributes (message, delay, original_stanza) {
-                delay = delay || message.querySelector('delay');
-                const type = message.getAttribute('type'),
-                      body = this.getMessageBody(message);
-
-                const delayed = !_.isNull(delay),
-                    is_groupchat = type === 'groupchat',
-                    chat_state = message.getElementsByTagName(_converse.COMPOSING).length && _converse.COMPOSING ||
-                        message.getElementsByTagName(_converse.PAUSED).length && _converse.PAUSED ||
-                        message.getElementsByTagName(_converse.INACTIVE).length && _converse.INACTIVE ||
-                        message.getElementsByTagName(_converse.ACTIVE).length && _converse.ACTIVE ||
-                        message.getElementsByTagName(_converse.GONE).length && _converse.GONE;
-
-                let from;
-                if (is_groupchat) {
-                    from = Strophe.unescapeNode(Strophe.getResourceFromJid(message.getAttribute('from')));
-                } else {
-                    from = Strophe.getBareJidFromJid(message.getAttribute('from'));
-                }
-                const time = delayed ? delay.getAttribute('stamp') : moment().format();
-                let sender, fullname;
-                if ((is_groupchat && from === this.get('nick')) || (!is_groupchat && from === _converse.bare_jid)) {
-                    sender = 'me';
-                    fullname = _converse.xmppstatus.get('fullname') || from;
-                } else {
-                    sender = 'them';
-                    fullname = this.get('fullname') || from;
-                }
-                return {
-                    'type': type,
-                    'chat_state': chat_state,
-                    'delayed': delayed,
-                    'fullname': fullname,
-                    'message': body || undefined,
-                    'msgid': message.getAttribute('id'),
-                    'sender': sender,
-                    'time': time
-                };
-            },
-
-            createMessage (message, delay, original_stanza) {
-                return this.messages.create(this.getMessageAttributes.apply(this, arguments));
-            },
-
-            newMessageWillBeHidden () {
-                /* Returns a boolean to indicate whether a newly received
-                 * message will be visible to the user or not.
-                 */
-                return this.get('hidden') ||
-                    this.get('minimized') ||
-                    this.isScrolledUp() ||
-                    _converse.windowState === 'hidden';
-            },
-
-            incrementUnreadMsgCounter (stanza) {
-                /* Given a newly received message, update the unread counter if
-                 * necessary.
-                 */
-                if (_.isNull(stanza.querySelector('body'))) {
-                    return; // The message has no text
-                }
-                if (utils.isNewMessage(stanza) && this.newMessageWillBeHidden()) {
-                    this.save({'num_unread': this.get('num_unread') + 1});
-                    _converse.incrementMsgCounter();
-                }
-            },
-
-            clearUnreadMsgCounter() {
-                this.save({'num_unread': 0});
-            },
-
-            isScrolledUp () {
-                return this.get('scrolled', true);
-            }
-        });
-
         this.ConnectionFeedback = Backbone.Model.extend({
-
             defaults: {
-                'connection_status': undefined,
+                'connection_status': Strophe.Status.DISCONNECTED,
                 'message': ''
             },
 
@@ -1741,7 +1629,7 @@
             } catch (e) {
                 _converse.log(
                     "Could not restore session for jid: "+
-                    this.jid+" Error message: "+e.message);
+                    this.jid+" Error message: "+e.message, Strophe.LogLevel.WARN);
                 this.clearSession(); // If there's a roster, we want to clear it (see #555)
                 return false;
             }

@@ -37,7 +37,7 @@
         // an error will be raised if the plugin is not found.
         //
         // NB: These plugins need to have already been loaded via require.js.
-        optional_dependencies: ['converse-muc', 'converse-controlbox', 'converse-rosterview'],
+        dependencies: ['converse-muc', 'converse-controlbox', 'converse-rosterview'],
 
         enabled (_converse) {
             return _.includes(['mobile', 'fullscreen'], _converse.view_mode);
@@ -92,14 +92,14 @@
             },
 
             ChatBoxView: {
-                _show (focus) {
+                show (focus) {
                     /* We only have one chat visible at any one
                      * time. So before opening a chat, we make sure all other
                      * chats are hidden.
                      */
                     if (!this.model.get('hidden')) {
                         _.each(this.__super__._converse.chatboxviews.xget(this.model.get('id')), hideChat);
-                        return this.__super__._show.apply(this, arguments);
+                        return this.__super__.show.apply(this, arguments);
                     }
                 }
             },

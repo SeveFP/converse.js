@@ -64,15 +64,14 @@
 
                 render: function (cfg) {
                     const { _converse } = this.__super__;
-                    const form = this.el.querySelector('form');
                     this.__super__.render.apply(this, arguments);
-                    if (_.isNull(form)) {
-                        if (_converse.allow_registration) {
-                            this.el.insertAdjacentHTML(
-                                'beforeend',
-                                tpl_register_link({'__': _converse.__})
-                            );
+                    if (_converse.allow_registration) {
+                        if (_.isUndefined(this.registerlinkview)) {
+                            this.registerlinkview = new _converse.RegisterLinkView({'model': this.model});
+                            this.registerlinkview.render();
+                            this.el.insertAdjacentElement('beforeend', this.registerlinkview.el);
                         }
+                        this.registerlinkview.render();
                     }
                     return this;
                 }
@@ -156,7 +155,19 @@
             _converse.router.route('converse/register', _.partial(setActiveForm, 'register'));
 
 
-            _converse.RegisterPanel = Backbone.View.extend({
+            _converse.RegisterLinkView = Backbone.VDOMView.extend({
+
+                toHTML () {
+                    return tpl_register_link(
+                        _.extend(this.model.toJSON(), {
+                            '__': _converse.__,
+                            '_converse': _converse,
+                            'connection_status': _converse.connfeedback.get('connection_status'),
+                        }));
+                }
+            });
+
+            _converse.RegisterPanel = Backbone.NativeView.extend({
                 tagName: 'div',
                 id: "converse-register-panel",
                 className: 'controlbox-pane fade-in',

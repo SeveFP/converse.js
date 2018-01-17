@@ -15,8 +15,20 @@
 }(this, function (converse, tpl_chatbox) {
     "use strict";
     const { _, utils } = converse.env;
+    const HEADLINES_TYPE = 'headline';
 
     converse.plugins.add('converse-headline', {
+        /* Plugin dependencies are other plugins which might be
+         * overridden or relied upon, and therefore need to be loaded before
+         * this plugin.
+         *
+         * If the setting "strict_plugin_dependencies" is set to true,
+         * an error will be raised if the plugin is not found. By default it's
+         * false, which means these plugins are only loaded opportunistically.
+         *
+         * NB: These plugins need to have already been loaded via require.js.
+         */
+        dependencies: ["converse-chatview"],
 
         overrides: {
             // Overrides mentioned here will be picked up by converse.js's
@@ -24,6 +36,17 @@
             // relevant objects or classes.
             //
             // New functions which don't exist yet can also be added.
+
+            ChatBoxes: {
+                model (attrs, options) {
+                    const { _converse } = this.__super__;
+                    if (attrs.type == HEADLINES_TYPE) {
+                        return new _converse.HeadlinesBox(attrs, options);
+                    } else {
+                        return this.__super__.model.apply(this, arguments);
+                    }
+                },
+            },
 
             ChatBoxViews: {
                 onChatBoxAdded (item) {
@@ -40,12 +63,25 @@
             }
         },
 
+
         initialize () {
             /* The initialize function gets called as soon as the plugin is
              * loaded by converse.js's plugin machinery.
              */
             const { _converse } = this,
                 { __ } = _converse;
+
+            _converse.HeadlinesBox = _converse.ChatBox.extend({
+                defaults: {
+                    'type': 'headline',
+                    'show_avatar': false,
+                    'bookmarked': false,
+                    'chat_state': undefined,
+                    'num_unread': 0,
+                    'url': ''
+                },
+            });
+
 
             _converse.HeadlinesBoxView = _converse.ChatBoxView.extend({
                 className: 'chatbox headlines',
@@ -57,6 +93,8 @@
                 },
 
                 initialize () {
+                    this.scrollDown = _.debounce(this._scrollDown, 250);
+                    this.markScrolled = _.debounce(this._markScrolled, 100);
                     this.disable_mam = true; // Don't do MAM queries for this box
                     this.model.messages.on('add', this.onMessageAdded, this);
                     this.model.on('show', this.show, this);
@@ -69,22 +107,23 @@
                 },
 
                 render () {
-                    this.$el.attr('id', this.model.get('box_id'))
+                    this.el.setAttribute('id', this.model.get('box_id'))
                     this.el.innerHTML = tpl_chatbox(
                         _.extend(this.model.toJSON(), {
                                 info_close: '',
                                 label_personal_message: '',
-                                show_avatar: false,
                                 show_send_button: false,
                                 show_textarea: false,
                                 show_toolbar: false,
                                 unread_msgs: ''
                             }
                         ));
-                    this.$content = this.$el.find('.chat-content');
-                    utils.refreshWebkit();
+                    this.content = this.el.querySelector('.chat-content');
                     return this;
-                }
+                },
+
+                // Override to avoid the method in converse-chatview.js
+                'afterShown': _.noop
             });
 
             function onHeadlineMessage (message) {
@@ -98,7 +137,7 @@
                         'id': from_jid,
                         'jid': from_jid,
                         'fullname':  from_jid,
-                        'type': 'headline'
+                        'type': 'headline',
                     });
                     chatbox.createMessage(message, undefined, message);
                     _converse.emit('message', {'chatbox': chatbox, 'stanza': message});

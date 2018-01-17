@@ -1,3 +1,4 @@
+SHELL := /bin/bash --login
 # You can set these variables from the command line.
 UGLIFYJS		?= node_modules/.bin/uglifyjs
 BABEL			?= node_modules/.bin/babel
@@ -8,6 +9,7 @@ CHROMIUM		?= ./node_modules/.bin/run-headless-chromium
 CLEANCSS		?= ./node_modules/clean-css-cli/bin/cleancss --skip-rebase
 ESLINT		  	?= ./node_modules/.bin/eslint
 HTTPSERVE	   	?= ./node_modules/.bin/http-server
+HTTPSERVE_PORT	        ?= 8000
 PAPER		   	=
 PO2JSON		 	?= ./node_modules/.bin/po2json
 RJS			 	?= ./node_modules/.bin/r.js
@@ -15,6 +17,15 @@ SASS			?= ./.bundle/bin/sass
 SPHINXBUILD	 	?= ./bin/sphinx-build
 SED				?= sed
 SPHINXOPTS	  	=
+
+
+
+# In the case user wishes to use RVM 
+USE_RVM                 ?= false
+RVM_RUBY_VERSION        ?= 2.4.2
+ifeq ($(USE_RVM),true)
+	RVM_USE                 = rvm use $(RVM_RUBY_VERSION)
+endif
 
 # Internal variables.
 ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) ./docs/source
@@ -51,16 +62,16 @@ help:
 
 .PHONY: serve
 serve: dev 
-	$(HTTPSERVE) -p 8000 -c-1
+	$(HTTPSERVE) -p $(HTTPSERVE_PORT) -c-1
 
 .PHONY: serve_bg
 serve_bg: dev
-	$(HTTPSERVE) -p 8000 -c-1 -s &
+	$(HTTPSERVE) -p $(HTTPSERVE_PORT) -c-1 -s &
 
 ########################################################################
 ## Translation machinery
 
-GETTEXT = xgettext --language="JavaScript" --keyword=__ --keyword=___ --from-code=UTF-8 --output=locale/converse.pot dist/converse-no-dependencies.js --package-name=Converse.js --copyright-holder="Jan-Carel Brand" --package-version=3.2.1 -c
+GETTEXT = xgettext --language="JavaScript" --keyword=__ --keyword=___ --from-code=UTF-8 --output=locale/converse.pot dist/converse-no-dependencies.js --package-name=Converse.js --copyright-holder="Jan-Carel Brand" --package-version=3.3.0 -c
 
 .PHONY: pot
 pot: dist/converse-no-dependencies.js
@@ -72,7 +83,7 @@ po:
 
 .PHONY: po2json
 po2json:
-	find ./locale -maxdepth 1 -mindepth 1 -type d -exec $(PO2JSON) -p -f jed -d converse {}/LC_MESSAGES/converse.po {}/LC_MESSAGES/converse.json \;
+	find ./locale -maxdepth 1 -mindepth 1 -type d -exec $(PO2JSON) -f jed1.x -d converse {}/LC_MESSAGES/converse.po {}/LC_MESSAGES/converse.json \;
 
 ########################################################################
 ## Release management
@@ -102,6 +113,7 @@ stamp-npm: package.json
 
 stamp-bundler: Gemfile
 	mkdir -p .bundle
+	$(RVM_USE)
 	gem install --user bundler --bindir .bundle/bin
 	$(BUNDLE) install --path .bundle --binstubs .bundle/bin
 	touch stamp-bundler
@@ -159,27 +171,28 @@ transpile: stamp-npm src
 
 BUILDS = dist/converse.js \
 		 dist/converse.min.js \
-		 dist/converse-esnext.js \
-		 dist/converse-esnext.min.js \
+         dist/converse-headless.js \
+		 dist/converse-headless.min.js \
 		 dist/converse-muc-embedded.js \
 		 dist/converse-muc-embedded.min.js \
-		 dist/converse-no-jquery.js \
- 		 dist/converse-no-jquery.min.js \
 		 dist/converse-no-dependencies.min.js \
 		 dist/converse-no-dependencies.js
+
+# dist/converse-esnext.js \
+# dist/converse-esnext.min.js \
 
 dist/converse.js: transpile src node_modules
 	$(RJS) -o src/build.js include=converse out=dist/converse.js optimize=none 
 dist/converse.min.js: transpile src node_modules
 	$(RJS) -o src/build.js include=converse out=dist/converse.min.js
+dist/converse-headless.js: transpile src node_modules
+	$(RJS) -o src/build.js paths.converse=src/headless include=converse out=dist/converse-headless.js optimize=none 
+dist/converse-headless.min.js: transpile src node_modules
+	$(RJS) -o src/build.js paths.converse=src/headless include=converse out=dist/converse-headless.min.js
 dist/converse-esnext.js: src node_modules
 	$(RJS) -o src/build-esnext.js include=converse out=dist/converse-esnext.js optimize=none 
 dist/converse-esnext.min.js: src node_modules
 	$(RJS) -o src/build-esnext.js include=converse out=dist/converse-esnext.min.js
-dist/converse-no-jquery.js: transpile src node_modules
-	$(RJS) -o src/build.js include=converse wrap.endFile=end-no-jquery.frag exclude=jquery exclude=jquery.noconflict out=dist/converse-no-jquery.js optimize=none 
-dist/converse-no-jquery.min.js: transpile src node_modules transpile
-	$(RJS) -o src/build.js include=converse wrap.endFile=end-no-jquery.frag exclude=jquery exclude=jquery.noconflict out=dist/converse-no-jquery.min.js
 dist/converse-no-dependencies.js: transpile src node_modules
 	$(RJS) -o src/build-no-dependencies.js optimize=none out=dist/converse-no-dependencies.js
 dist/converse-no-dependencies.min.js: transpile src node_modules
@@ -205,8 +218,7 @@ eslint: stamp-npm
 
 .PHONY: check
 check: eslint
-	LOG_CR_VERBOSITY=INFO $(CHROMIUM) http://localhost:8000/tests.html
-
+	LOG_CR_VERBOSITY=INFO $(CHROMIUM) --no-sandbox http://localhost:$(HTTPSERVE_PORT)/tests.html
 
 ########################################################################
 ## Documentation

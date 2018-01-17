@@ -8,46 +8,57 @@
 
 (function (root, factory) {
     define([
-            "jquery.noconflict",
             "converse-core",
             "converse-chatboxes",
             "emojione",
             "xss",
+            "tpl!action",
             "tpl!chatbox",
             "tpl!chatbox_head",
-            "tpl!new_day",
-            "tpl!action",
             "tpl!emojis",
-            "tpl!message",
             "tpl!help_message",
-            "tpl!toolbar",
-            "tpl!spinner"
+            "tpl!info",
+            "tpl!message",
+            "tpl!new_day",
+            "tpl!spinner",
+            "tpl!toolbar"
     ], factory);
 }(this, function (
-            $,
             converse,
             dummy,
             emojione,
             xss,
+            tpl_action,
             tpl_chatbox,
             tpl_chatbox_head,
-            tpl_new_day,
-            tpl_action,
             tpl_emojis,
-            tpl_message,
             tpl_help_message,
-            tpl_toolbar,
-            tpl_spinner
+            tpl_info,
+            tpl_message,
+            tpl_new_day,
+            tpl_spinner,
+            tpl_toolbar
     ) {
     "use strict";
-    const { $msg, Backbone, Strophe, _, b64_sha1, moment, utils } = converse.env;
-
+    const { $msg, Backbone, Strophe, _, b64_sha1, sizzle, moment } = converse.env;
+    const u = converse.env.utils;
     const KEY = {
         ENTER: 13,
         FORWARD_SLASH: 47
     };
 
     converse.plugins.add('converse-chatview', {
+        /* Plugin dependencies are other plugins which might be
+         * overridden or relied upon, and therefore need to be loaded before
+         * this plugin.
+         *
+         * If the setting "strict_plugin_dependencies" is set to true,
+         * an error will be raised if the plugin is not found. By default it's
+         * false, which means these plugins are only loaded opportunistically.
+         *
+         * NB: These plugins need to have already been loaded via require.js.
+         */
+        dependencies: ["converse-chatboxes"],
 
         overrides: {
             // Overrides mentioned here will be picked up by converse.js's
@@ -64,7 +75,7 @@
                             _.includes(ev.target.classList, 'insert-emoji')) {
                             return;
                         }
-                        utils.slideInAllElements(
+                        u.slideInAllElements(
                             document.querySelectorAll('.toolbar-menu')
                         )
                     }
@@ -116,7 +127,7 @@
             }
             _converse.api.listen.on('windowStateChanged', onWindowStateChanged);
 
-            _converse.EmojiPicker = Backbone.Model.extend({ 
+            _converse.EmojiPicker = Backbone.Model.extend({
                 defaults: {
                     'current_category': 'people',
                     'current_skintone': '',
@@ -129,7 +140,7 @@
                 }
             });
 
-            _converse.EmojiPickerView = Backbone.View.extend({
+            _converse.EmojiPickerView = Backbone.NativeView.extend({
                 className: 'emoji-picker-container toolbar-menu collapsed',
                 events: {
                     'click .emoji-category-picker li.emoji-category': 'chooseCategory',
@@ -147,8 +158,8 @@
                         _.extend(
                             this.model.toJSON(), {
                                 'transform': _converse.use_emojione ? emojione.shortnameToImage : emojione.shortnameToUnicode,
-                                'emojis_by_category': utils.getEmojisByCategory(_converse, emojione),
-                                'toned_emojis': utils.getTonedEmojis(_converse),
+                                'emojis_by_category': u.getEmojisByCategory(_converse, emojione),
+                                'toned_emojis': u.getTonedEmojis(_converse),
                                 'skintones': ['tone1', 'tone2', 'tone3', 'tone4', 'tone5'],
                                 'shouldBeHidden': this.shouldBeHidden
                             }
@@ -218,7 +229,7 @@
                 }
             });
 
-            _converse.ChatBoxHeading = Backbone.View.extend({
+            _converse.ChatBoxHeading = Backbone.NativeView.extend({
 
                 initialize () {
                     this.model.on('change:image', this.render, this);
@@ -246,7 +257,7 @@
                 }
             });
 
-            _converse.ChatBoxView = Backbone.View.extend({
+            _converse.ChatBoxView = Backbone.NativeView.extend({
                 length: 200,
                 className: 'chatbox hidden',
                 is_chatroom: false,  // Leaky abstraction from MUC
@@ -263,7 +274,8 @@
                 },
 
                 initialize () {
-                    this.markScrolled = _.debounce(this.markScrolled, 100);
+                    this.scrollDown = _.debounce(this._scrollDown, 250);
+                    this.markScrolled = _.debounce(this._markScrolled, 100);
                     this.createEmojiPicker();
                     this.model.messages.on('add', this.onMessageAdded, this);
                     this.model.on('show', this.show, this);
@@ -274,9 +286,7 @@
                     this.model.on('showHelpMessages', this.showHelpMessages, this);
                     this.model.on('sendMessage', this.sendMessage, this);
 
-
                     this.render().renderToolbar().insertHeading().fetchMessages();
-                    utils.refreshWebkit();
                     _converse.emit('chatBoxOpened', this);
                     _converse.emit('chatBoxInitialized', this);
                 },
@@ -294,7 +304,6 @@
                             }
                         ));
                     this.content = this.el.querySelector('.chat-content');
-                    this.$content = $(this.content);
                     return this;
                 },
 
@@ -321,9 +330,7 @@
                 afterMessagesFetched () {
                     this.insertIntoDOM();
                     this.scrollDown();
-                    // We only start listening for the scroll event after
-                    // cached messages have been fetched
-                    this.$content.on('scroll', this.markScrolled.bind(this));
+                    this.content.addEventListener('scroll', this.markScrolled.bind(this));
                     _converse.emit('afterMessagesFetched', this);
                 },
 
@@ -349,18 +356,21 @@
                 },
 
                 clearStatusNotification () {
-                    this.$content.find('div.chat-event').remove();
+                    u.removeElement(this.content.querySelector('.chat-event'));
                 },
 
                 showStatusNotification (message, keep_old, permanent) {
                     if (!keep_old) {
                         this.clearStatusNotification();
                     }
-                    const $el = $('<div class="chat-info"></div>').text(message);
-                    if (!permanent) {
-                        $el.addClass('chat-event');
-                    }
-                    this.content.insertAdjacentElement('beforeend', $el[0]);
+                    this.content.insertAdjacentHTML(
+                        'beforeend',
+                        tpl_info({
+                            'extra_classes': !permanent ? 'chat-event' : '',
+                            'message': message,
+                            'isodate': moment().format(),
+                            'data': ''
+                        }));
                     this.scrollDown();
                 },
 
@@ -382,37 +392,71 @@
                     );
                 },
 
-                insertDayIndicator (date, prepend) {
-                    /* Appends (or prepends if "prepend" is truthy) an indicator
-                     * into the chat area, showing the day as given by the
-                     * passed in date.
+                insertDayIndicator (next_msg_el) {
+                    /* Inserts an indicator into the chat area, showing the
+                     * day as given by the passed in date.
+                     *
+                     * The indicator is only inserted if necessary.
                      *
                      * Parameters:
-                     *  (String) date - An ISO8601 date string.
+                     *  (HTMLElement) next_msg_el - The message element before
+                     *      which the day indicator element must be inserted.
+                     *      This element must have a "data-isodate" attribute
+                     *      which specifies its creation date.
                      */
-                    const day_date = moment(date).startOf('day');
-                    const insert = prepend ? this.$content.prepend: this.$content.append;
-                    insert.call(this.$content, tpl_new_day({
-                        isodate: day_date.format(),
-                        datestring: day_date.format("dddd MMM Do YYYY")
-                    }));
+                    const prev_msg_el = u.getPreviousElement(next_msg_el, ".message:not(.chat-event)"),
+                          prev_msg_date = _.isNull(prev_msg_el) ? null : prev_msg_el.getAttribute('data-isodate'),
+                          next_msg_date = next_msg_el.getAttribute('data-isodate');
+
+                    if (_.isNull(prev_msg_date) || moment(next_msg_date).isAfter(prev_msg_date, 'day')) {
+                        const day_date = moment(next_msg_date).startOf('day');
+                        next_msg_el.insertAdjacentHTML('beforeBegin',
+                            tpl_new_day({
+                                'isodate': day_date.format(),
+                                'datestring': day_date.format("dddd MMM Do YYYY")
+                            })
+                        );
+                    }
                 },
 
-                insertMessage (attrs, prepend) {
-                    /* Helper method which appends a message (or prepends if the
-                     * 2nd parameter is set to true) to the end of the chat box's
-                     * content area.
+                getLastMessageDate (cutoff) {
+                    /* Return the ISO8601 format date of the latest message.
                      *
                      * Parameters:
-                     *  (Object) attrs: An object containing the message attributes.
+                     *  (Object) cutoff: Moment Date cutoff date. The last
+                     *      message received cutoff this date will be returned.
                      */
-                    const insert = prepend ? this.$content.prepend : this.$content.append;
-                    _.flow(($el) => {
-                            insert.call(this.$content, $el);
-                            return $el;
-                        },
-                        this.scrollDown.bind(this)
-                    )(this.renderMessage(attrs));
+                    const first_msg = u.getFirstChildElement(this.content, '.message:not(.chat-event)'),
+                          oldest_date = first_msg ? first_msg.getAttribute('data-isodate') : null;
+                    if (!_.isNull(oldest_date) && moment(oldest_date).isAfter(cutoff)) {
+                        return null;
+                    }
+                    const last_msg = u.getLastChildElement(this.content, '.message:not(.chat-event)'),
+                          most_recent_date = last_msg ? last_msg.getAttribute('data-isodate') : null;
+                    if (_.isNull(most_recent_date) || moment(most_recent_date).isBefore(cutoff)) {
+                        return most_recent_date;
+                    }
+                    /* XXX: We avoid .chat-event messages, since they are
+                     * temporary and get removed once a new element is
+                     * inserted into the chat area, so we don't query for
+                     * them here, otherwise we get a null reference later
+                     * upon element insertion.
+                     */
+                    const msg_dates = _.invokeMap(
+                        sizzle('.message:not(.chat-event)', this.content),
+                        Element.prototype.getAttribute, 'data-isodate'
+                    )
+                    if (_.isObject(cutoff)) {
+                        cutoff = cutoff.format();
+                    }
+                    msg_dates.push(cutoff);
+                    msg_dates.sort();
+                    const idx = msg_dates.lastIndexOf(cutoff);
+                    if (idx === 0) {
+                        return null;
+                    } else {
+                        return msg_dates[idx-1];
+                    }
                 },
 
                 showMessage (attrs) {
@@ -427,60 +471,42 @@
                      *  (Object) attrs: An object containing the message
                      *      attributes.
                      */
-                    let current_msg_date = moment(attrs.time) || moment;
-                    const $first_msg = this.$content.find('.chat-message:first'),
-                          first_msg_date = $first_msg.data('isodate');
+                    const current_msg_date = moment(attrs.time) || moment,
+                        previous_msg_date = this.getLastMessageDate(current_msg_date),
+                        message_el = this.renderMessage(attrs);
 
-                    if (!first_msg_date) {
-                        // This is the first received message, so we insert a
-                        // date indicator before it.
-                        this.insertDayIndicator(current_msg_date);
-                        this.insertMessage(attrs);
-                        return;
+                    if (_.isNull(previous_msg_date)) {
+                        this.content.insertAdjacentElement('afterbegin', message_el);
+                    } else {
+                        const previous_msg_el = sizzle(`[data-isodate="${previous_msg_date}"]:last`, this.content).pop();
+                        previous_msg_el.insertAdjacentElement('afterend', message_el);
                     }
+                    this.insertDayIndicator(message_el);
+                    this.clearStatusNotification();
+                    this.setScrollPosition(message_el);
+                },
 
-                    const last_msg_date = this.$content.find('.chat-message:last').data('isodate');
-                    if (current_msg_date.isAfter(last_msg_date) ||
-                            current_msg_date.isSame(last_msg_date)) {
-                        // The new message is after the last message
-                        if (current_msg_date.isAfter(last_msg_date, 'day')) {
-                            // Append a new day indicator
-                            this.insertDayIndicator(current_msg_date);
+                setScrollPosition (message_el) {
+                    /* Given a newly inserted message, determine whether we
+                     * should keep the scrollbar in place (so as to not scroll
+                     * up when using infinite scroll).
+                     */
+                    if (this.model.get('scrolled')) {
+                        const next_msg_el = u.getNextElement(message_el, ".chat-message");
+                        if (next_msg_el) {
+                            // The currently received message is not new, there
+                            // are newer messages after it. So let's see if we
+                            // should maintain our current scroll position.
+                            if (this.content.scrollTop === 0 || this.model.get('top_visible_message')) {
+                                const top_visible_message = this.model.get('top_visible_message') || next_msg_el;
+
+                                this.model.set('top_visible_message', top_visible_message);
+                                this.content.scrollTop = top_visible_message.offsetTop - 30;
+                            }
                         }
-                        this.insertMessage(attrs);
-                        return;
+                    } else {
+                        this.scrollDown();
                     }
-                    if (current_msg_date.isBefore(first_msg_date) ||
-                            current_msg_date.isSame(first_msg_date)) {
-                        // The message is before the first, but on the same day.
-                        // We need to prepend the message immediately before the
-                        // first message (so that it'll still be after the day
-                        // indicator).
-                        this.insertMessage(attrs, 'prepend');
-                        if (current_msg_date.isBefore(first_msg_date, 'day')) {
-                            // This message is also on a different day, so
-                            // we prepend a day indicator.
-                            this.insertDayIndicator(current_msg_date, 'prepend');
-                        }
-                        return;
-                    }
-                    // Find the correct place to position the message
-                    current_msg_date = current_msg_date.format();
-                    const msg_dates = _.map(
-                        this.$content.find('.chat-message'),
-                        (el) => $(el).data('isodate')
-                    );
-                    msg_dates.push(current_msg_date);
-                    msg_dates.sort();
-
-                    const idx = msg_dates.indexOf(current_msg_date)-1;
-                    const $latest_message = this.$content.find(`.chat-message[data-isodate="${msg_dates[idx]}"]:last`);
-                    _.flow(($el) => {
-                            $el.insertAfter($latest_message);
-                            return $el;
-                        },
-                        this.scrollDown.bind(this)
-                    )(this.renderMessage(attrs));
                 },
 
                 getExtraMessageTemplateAttributes () {
@@ -494,7 +520,11 @@
                 },
 
                 getExtraMessageClasses (attrs) {
-                    return attrs.delayed && 'delayed' || '';
+                    if (window.converse_disable_effects) {
+                        return attrs.delayed && 'delayed' || '';
+                    } else {
+                        return 'onload ' + (attrs.delayed && 'delayed' || '');
+                    }
                 },
 
                 renderMessage (attrs) {
@@ -524,18 +554,9 @@
                         template = tpl_message;
                         username = attrs.sender === 'me' && __('me') || fullname;
                     }
-                    this.$content.find('div.chat-event').remove();
 
-                    if (text.length > 8000) {
-                        text = text.substring(0, 10) + '...';
-                        this.showStatusNotification(
-                            __("A very large message has been received. "+
-                               "This might be due to an attack meant to degrade the chat performance. "+
-                               "Output has been shortened."),
-                            true, true);
-                    }
                     const msg_time = moment(attrs.time) || moment;
-                    const $msg = $(template(
+                    const msg = u.stringToElement(template(
                         _.extend(this.getExtraMessageTemplateAttributes(attrs), {
                             'msgid': attrs.msgid,
                             'sender': attrs.sender,
@@ -545,25 +566,32 @@
                             'extra_classes': this.getExtraMessageClasses(attrs)
                         })
                     ));
-                    const msg_content = $msg[0].querySelector('.chat-msg-content');
-                    msg_content.innerHTML = utils.addEmoji(
-                        _converse, emojione, utils.addHyperlinks(xss.filterXSS(text, {'whiteList': {}}))
+                    if (!window.converse_disable_effects) {
+                        window.setTimeout(_.partial(u.removeClass, 'onload', msg), 2000);
+                    }
+                    const msg_content = msg.querySelector('.chat-msg-content');
+                    msg_content.innerHTML = u.addEmoji(
+                        _converse, emojione, u.addHyperlinks(xss.filterXSS(text, {'whiteList': {}}))
                     );
-                    utils.renderImageURLs(msg_content);
-                    return $msg;
+                    u.renderImageURLs(msg_content).then(this.scrollDown.bind(this));
+                    return msg;
                 },
 
                 showHelpMessages (msgs, type, spinner) {
                     _.each(msgs, (msg) => {
-                        this.$content.append($(tpl_help_message({
-                            'type': type||'info',
-                            'message': msgs
-                        })));
+                        this.content.insertAdjacentHTML(
+                            'beforeend',
+                            tpl_help_message({
+                                'isodate': moment().format(),
+                                'type': type||'info',
+                                'message': xss.filterXSS(msg, {'whiteList': {'strong': []}})
+                            })
+                        );
                     });
                     if (spinner === true) {
-                        this.$content.append(tpl_spinner);
+                        this.addSpinner();
                     } else if (spinner === false) {
-                        this.$content.find('span.spinner').remove();
+                        this.clearSpinner();
                     }
                     return this.scrollDown();
                 },
@@ -575,7 +603,10 @@
                         } else {
                             this.showStatusNotification(message.get('fullname')+' '+__('is typing'));
                         }
-                        this.clear_status_timeout = window.setTimeout(this.clearStatusNotification.bind(this), 30000);
+                        this.clear_status_timeout = window.setTimeout(
+                            this.clearStatusNotification.bind(this),
+                            30000
+                        );
                     } else if (message.get('chat_state') === _converse.PAUSED) {
                         if (message.get('sender') === 'me') {
                             this.showStatusNotification(__('Stopped typing on the other device'));
@@ -583,27 +614,28 @@
                             this.showStatusNotification(message.get('fullname')+' '+__('has stopped typing'));
                         }
                     } else if (_.includes([_converse.INACTIVE, _converse.ACTIVE], message.get('chat_state'))) {
-                        this.$content.find('div.chat-event').remove();
+                        this.clearStatusNotification();
                     } else if (message.get('chat_state') === _converse.GONE) {
                         this.showStatusNotification(message.get('fullname')+' '+__('has gone away'));
                     }
+                    return message;
                 },
 
                 shouldShowOnTextMessage () {
-                    return !this.$el.is(':visible');
+                    return !u.isVisible(this.el);
                 },
 
                 handleTextMessage (message) {
                     this.showMessage(_.clone(message.attributes));
-                    if (utils.isNewMessage(message) && message.get('sender') === 'me') {
-                        // We remove the "scrolled" flag so that the chat area
-                        // gets scrolled down. We always want to scroll down
-                        // when the user writes a message as opposed to when a
-                        // message is received.
-                        this.model.set('scrolled', false);
-                    } else {
-                        if (utils.isNewMessage(message) && this.model.get('scrolled', true)) {
-                            this.$el.find('.new-msgs-indicator').removeClass('hidden');
+                    if (u.isNewMessage(message)) {
+                        if (message.get('sender') === 'me') {
+                            // We remove the "scrolled" flag so that the chat area
+                            // gets scrolled down. We always want to scroll down
+                            // when the user writes a message as opposed to when a
+                            // message is received.
+                            this.model.set('scrolled', false);
+                        } else if (this.model.get('scrolled', true)) {
+                            this.showNewMessagesIndicator();
                         }
                     }
                     if (this.shouldShowOnTextMessage()) {
@@ -614,9 +646,16 @@
                 },
 
                 handleErrorMessage (message) {
-                    const $message = $(`[data-msgid=${message.get('msgid')}]`);
-                    if ($message.length) {
-                        $message.after($('<div class="chat-info chat-error"></div>').text(message.get('message')));
+                    const message_el = this.content.querySelector(`[data-msgid="${message.get('msgid')}"]`);
+                    if (!_.isNull(message_el)) {
+                        message_el.insertAdjacentHTML(
+                            'afterend',
+                            tpl_info({
+                                'extra_classes': 'chat-error',
+                                'message': message.get('message'),
+                                'isodate': moment().format(),
+                                'data': ''
+                            }));
                         this.scrollDown();
                     }
                 },
@@ -633,10 +672,13 @@
                     }
                     if (message.get('type') === 'error') {
                         this.handleErrorMessage(message);
-                    } else if (!message.get('message')) {
-                        this.handleChatStateMessage(message);
                     } else {
-                        this.handleTextMessage(message);
+                        if (message.get('chat_state')) {
+                            this.handleChatStateMessage(message);
+                        }
+                        if (message.get('message')) {
+                            this.handleTextMessage(message);
+                        }
                     }
                     _converse.emit('messageAdded', {
                         'message': message,
@@ -668,8 +710,11 @@
                         // Forward the message, so that other connected resources are also aware of it.
                         _converse.connection.send(
                             $msg({ to: _converse.bare_jid, type: 'chat', id: message.get('msgid') })
-                            .c('forwarded', {xmlns:'urn:xmpp:forward:0'})
-                            .c('delay', {xmns:'urn:xmpp:delay',stamp:(new Date()).getTime()}).up()
+                            .c('forwarded', {'xmlns': Strophe.NS.FORWARD})
+                            .c('delay', {
+                                'xmns': Strophe.NS.DELAY,
+                                'stamp': moment.format()
+                            }).up()
                             .cnode(messageStanza.tree())
                         );
                     }
@@ -696,9 +741,9 @@
                         }
                         else if (match[1] === "help") {
                             const msgs = [
-                                `<strong>/help</strong>:${__('Show this menu')}`,
-                                `<strong>/me</strong>:${__('Write in the third person')}`,
-                                `<strong>/clear</strong>:${__('Remove messages')}`
+                                `<strong>/clear</strong>: ${__('Remove messages')}`,
+                                `<strong>/me</strong>: ${__('Write in the third person')}`,
+                                `<strong>/help</strong>: ${__('Show this menu')}`
                                 ];
                             this.showHelpMessages(msgs);
                             return;
@@ -711,7 +756,7 @@
                         fullname,
                         sender: 'me',
                         time: moment().format(),
-                        message: text
+                        message: emojione.shortnameToUnicode(text)
                     });
                     this.sendMessage(message);
                 },
@@ -747,10 +792,16 @@
                     }
                     if (state === _converse.COMPOSING) {
                         this.chat_state_timeout = window.setTimeout(
-                            this.setChatState.bind(this), _converse.TIMEOUTS.PAUSED, _converse.PAUSED);
+                            this.setChatState.bind(this),
+                            _converse.TIMEOUTS.PAUSED,
+                            _converse.PAUSED
+                        );
                     } else if (state === _converse.PAUSED) {
                         this.chat_state_timeout = window.setTimeout(
-                            this.setChatState.bind(this), _converse.TIMEOUTS.INACTIVE, _converse.INACTIVE);
+                            this.setChatState.bind(this),
+                            _converse.TIMEOUTS.INACTIVE,
+                            _converse.INACTIVE
+                        );
                     }
                     if (!no_save && this.model.get('chat_state') !== state) {
                         this.model.set('chat_state', state);
@@ -787,7 +838,7 @@
                     if (ev && ev.preventDefault) { ev.preventDefault(); }
                     const result = confirm(__("Are you sure you want to clear the messages from this chat box?"));
                     if (result === true) {
-                        this.$content.empty();
+                        this.content.innerHTML = '';
                         this.model.messages.reset();
                         this.model.messages.browserStorage._clear();
                     }
@@ -795,12 +846,13 @@
                 },
 
                 insertIntoTextArea (value) {
-                    const $textbox = this.$el.find('textarea.chat-textarea');
-                    let existing = $textbox.val();
+                    const textbox_el = this.el.querySelector('.chat-textarea');
+                    let existing = textbox_el.value;
                     if (existing && (existing[existing.length-1] !== ' ')) {
                         existing = existing + ' ';
                     }
-                    $textbox.focus().val(existing+value+' ');
+                    textbox_el.value = existing+value+' ';
+                    textbox_el.focus()
                 },
 
                 insertEmoji (ev) {
@@ -810,6 +862,9 @@
                 },
 
                 toggleEmojiMenu (ev) {
+                    if (u.hasClass('insert-emoji', ev.target)) {
+                        return;
+                    }
                     if (!_.isUndefined(ev)) {
                         ev.stopPropagation();
                         if (ev.target.classList.contains('emoji-category-picker') ||
@@ -822,9 +877,9 @@
                         document.querySelectorAll('.toolbar-menu'),
                         [this.emoji_picker_view.el]
                     );
-                    utils.slideInAllElements(elements)
+                    u.slideInAllElements(elements)
                         .then(_.partial(
-                                utils.slideToggleElement,
+                                u.slideToggleElement,
                                 this.emoji_picker_view.el))
                         .then(this.focus.bind(this));
                 },
@@ -841,7 +896,7 @@
                     const chat_status = item.get('chat_status');
                     let fullname = item.get('fullname');
                     fullname = _.isEmpty(fullname)? item.get('jid'): fullname;
-                    if (this.$el.is(':visible')) {
+                    if (u.isVisible(this.el)) {
                         if (chat_status === 'offline') {
                             this.showStatusNotification(fullname+' '+__('has gone offline'));
                         } else if (chat_status === 'away') {
@@ -849,7 +904,7 @@
                         } else if ((chat_status === 'dnd')) {
                             this.showStatusNotification(fullname+' '+__('is busy'));
                         } else if (chat_status === 'online') {
-                            this.$el.find('div.chat-event').remove();
+                            this.clearStatusNotification();
                         }
                     }
                 },
@@ -862,7 +917,7 @@
                     if (_converse.connection.connected) {
                         // Immediately sending the chat state, because the
                         // model is going to be destroyed afterwards.
-                        this.model.set('chat_state', _converse.INACTIVE);
+                        this.setChatState(_converse.INACTIVE);
                         this.sendChatState();
                     }
                     try {
@@ -895,29 +950,35 @@
                     );
                     this.el.querySelector('.chat-toolbar').innerHTML = toolbar(options);
 
-                    var toggle = this.el.querySelector('.toggle-smiley');
-                    toggle.innerHTML = '';
-                    toggle.appendChild(this.emoji_picker_view.render().el);
                     return this;
                 },
 
+                renderEmojiPicker () {
+                    var toggle = this.el.querySelector('.toggle-smiley');
+                    toggle.innerHTML = '';
+                    toggle.appendChild(this.emoji_picker_view.render().el);
+                },
+
                 focus () {
-                    this.el.querySelector('.chat-textarea').focus();
-                    _converse.emit('chatBoxFocused', this);
+                    const textarea_el = this.el.querySelector('.chat-textarea');
+                    if (!_.isNull(textarea_el)) {
+                        textarea_el.focus();
+                        _converse.emit('chatBoxFocused', this);
+                    }
                     return this;
                 },
 
                 hide () {
                     this.el.classList.add('hidden');
-                    utils.refreshWebkit();
                     return this;
                 },
 
                 afterShown (focus) {
-                    if (utils.isPersistableModel(this.model)) {
+                    if (u.isPersistableModel(this.model)) {
                         this.model.save();
                     }
                     this.setChatState(_converse.ACTIVE);
+                    this.renderEmojiPicker();
                     this.scrollDown();
                     if (focus) {
                         this.focus();
@@ -926,11 +987,15 @@
 
                 _show (focus) {
                     /* Inner show method that gets debounced */
-                    if (this.$el.is(':visible') && this.$el.css('opacity') === "1") {
+                    if (u.isVisible(this.el)) {
                         if (focus) { this.focus(); }
                         return;
                     }
-                    utils.fadeIn(this.el, _.bind(this.afterShown, this, focus));
+                    const that = this;
+                    u.fadeIn(this.el, function () {
+                        that.afterShown();
+                        if (focus) { that.focus(); }
+                    });
                 },
 
                 show (focus) {
@@ -945,6 +1010,10 @@
                     return this;
                 },
 
+                showNewMessagesIndicator () {
+                    u.showElement(this.el.querySelector('.new-msgs-indicator'));
+                },
+
                 hideNewMessagesIndicator () {
                     const new_msgs_indicator = this.el.querySelector('.new-msgs-indicator');
                     if (!_.isNull(new_msgs_indicator)) {
@@ -952,7 +1021,7 @@
                     }
                 },
 
-                markScrolled: function (ev) {
+                _markScrolled: function (ev) {
                     /* Called when the chat content is scrolled up or down.
                      * We want to record when the user has scrolled away from
                      * the bottom, so that we don't automatically scroll away
@@ -960,36 +1029,36 @@
                      * received.
                      */
                     if (ev && ev.preventDefault) { ev.preventDefault(); }
-                    if (this.model.get('auto_scrolled')) {
-                        this.model.set({
-                            'scrolled': false,
-                            'auto_scrolled': false
-                        });
-                        return;
-                    }
                     let scrolled = true;
                     const is_at_bottom =
-                        (this.$content.scrollTop() + this.$content.innerHeight()) >=
-                            this.$content[0].scrollHeight-10;
+                        (this.content.scrollTop + this.content.clientHeight) >=
+                            this.content.scrollHeight - 62; // sigh...
 
                     if (is_at_bottom) {
                         scrolled = false;
                         this.onScrolledDown();
                     }
-                    utils.safeSave(this.model, {'scrolled': scrolled});
+                    u.safeSave(this.model, {
+                        'scrolled': scrolled,
+                        'top_visible_message': null
+                    });
                 },
 
                 viewUnreadMessages () {
-                    this.model.save('scrolled', false);
+                    this.model.save({
+                        'scrolled': false,
+                        'top_visible_message': null
+                    });
                     this.scrollDown();
                 },
 
                 _scrollDown () {
                     /* Inner method that gets debounced */
-                    if (this.$content.is(':visible') && !this.model.get('scrolled')) {
-                        this.$content.scrollTop(this.$content[0].scrollHeight);
-                        this.onScrolledDown();
-                        this.model.save({'auto_scrolled': true});
+                    if (_.isUndefined(this.content)) {
+                        return;
+                    }
+                    if (u.isVisible(this.content) && !this.model.get('scrolled')) {
+                        this.content.scrollTop = this.content.scrollHeight;
                     }
                 },
 
@@ -999,18 +1068,6 @@
                         this.model.clearUnreadMsgCounter();
                     }
                     _converse.emit('chatBoxScrolledDown', {'chatbox': this.model});
-                },
-
-                scrollDown () {
-                    if (_.isUndefined(this.debouncedScrollDown)) {
-                        /* We wrap the method in a debouncer and set it on the
-                         * instance, so that we have it debounced per instance.
-                         * Debouncing it on the class-level is too broad.
-                         */
-                        this.debouncedScrollDown = _.debounce(this._scrollDown, 250);
-                    }
-                    this.debouncedScrollDown.apply(this, arguments);
-                    return this;
                 },
 
                 onWindowStateChanged (state) {

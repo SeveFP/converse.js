@@ -75,6 +75,10 @@
                     font-weight: bold;
                 }
                 .chat-message {
+                    &.onload {
+                        animation: colorchange-chatmessage-muc 1s;
+                        -webkit-animation: colorchange-chatmessage-muc 1s;
+                    }
                     .chat-msg-them {
                         color: $chatroom-message-them-color;
                     }
@@ -119,10 +123,8 @@
                         font-weight: bold;
                     }
                     .chatroom-features {
-                        position: absolute;
                         bottom: 0.5em;
-                        width: 25%;
-                        @include calc(width, '30% - 1em');
+                        width: 100%;
                     }
                     .awesomplete {
                         ul {
@@ -133,7 +135,8 @@
                         }
                     }
                     ul {
-                        padding: 0.3em 0;
+                        padding: 0.5em 0 0 0;
+                        margin-bottom: 0.5em;
                         overflow-x: hidden;
                         overflow-y: auto;
                         list-style: none;
@@ -183,6 +186,9 @@
                             }
                             &.moderator {
                                 color: $moderator-color;
+                            }
+                            &.visitor {
+                                color: $visitor-color;
                             }
                         }
                     }

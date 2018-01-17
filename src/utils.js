@@ -11,14 +11,12 @@
     define([
         "sizzle",
         "es6-promise",
-        "jquery.browser",
         "lodash.noconflict",
         "strophe",
     ], factory);
 }(this, function (
         sizzle,
         Promise,
-        jQBrowser,
         _,
         Strophe
     ) {
@@ -34,13 +32,6 @@
         'info': _.get(console, 'log') ? console.log.bind(console) : _.noop,
         'warn': _.get(console, 'log') ? console.log.bind(console) : _.noop
     }, console);
-
-    var afterAnimationEnd = function (el, callback) {
-        el.classList.remove('visible');
-        if (_.isFunction(callback)) {
-            callback();
-        }
-    };
 
     var unescapeHTML = function (htmlEscapedText) {
         /* Helper method that replace HTML-escaped symbols with equivalent characters
@@ -73,26 +64,6 @@
         });
     };
 
-    function calculateSlideStep (height) {
-        if (height > 100) {
-            return 10;
-        } else if (height > 50) {
-            return 5;
-        } else {
-            return 1;
-        }
-    }
-
-    function calculateElementHeight (el) {
-        /* Return the height of the passed in DOM element,
-         * based on the heights of its children.
-         */
-        return _.reduce(
-            el.children,
-            (result, child) => result + child.offsetHeight, 0
-        );
-    }
-
     function slideOutWrapup (el) {
         /* Wrapup function for slideOut. */
         el.removeAttribute('data-slider-marker');
@@ -103,6 +74,90 @@
 
 
     var u = {};
+
+    u.getNextElement = function (el, selector='*') {
+        let next_el = el.nextElementSibling;
+        while (!_.isNull(next_el) && !sizzle.matchesSelector(next_el, selector)) {
+            next_el = next_el.nextElementSibling;
+        }
+        return next_el;
+    }
+
+    u.getPreviousElement = function (el, selector='*') {
+        let prev_el = el.previousSibling;
+        while (!_.isNull(prev_el) && !sizzle.matchesSelector(prev_el, selector)) {
+            prev_el = prev_el.previousSibling
+        }
+        return prev_el;
+    }
+
+    u.getFirstChildElement = function (el, selector='*') {
+        let first_el = el.firstElementChild;
+        while (!_.isNull(first_el) && !sizzle.matchesSelector(first_el, selector)) {
+            first_el = first_el.nextSibling
+        }
+        return first_el;
+    }
+
+    u.getLastChildElement = function (el, selector='*') {
+        let last_el = el.lastElementChild;
+        while (!_.isNull(last_el) && !sizzle.matchesSelector(last_el, selector)) {
+            last_el = last_el.previousSibling
+        }
+        return last_el;
+    }
+
+    u.calculateElementHeight = function (el) {
+        /* Return the height of the passed in DOM element,
+         * based on the heights of its children.
+         */
+        return _.reduce(
+            el.children,
+            (result, child) => result + child.offsetHeight, 0
+        );
+    }
+
+    u.addClass = function (className, el) {
+        if (el instanceof Element) {
+            el.classList.add(className);
+        }
+    }
+
+    u.removeClass = function (className, el) {
+        if (el instanceof Element) {
+            el.classList.remove(className);
+        }
+        return el;
+    }
+
+    u.removeElement = function (el) {
+        if (!_.isNil(el) && !_.isNil(el.parentNode)) {
+            el.parentNode.removeChild(el);
+        }
+    }
+
+    u.showElement = _.flow(
+        _.partial(u.removeClass, 'collapsed'),
+        _.partial(u.removeClass, 'hidden')
+    )
+
+    u.hideElement = function (el) {
+        if (!_.isNil(el)) {
+            el.classList.add('hidden');
+        }
+        return el;
+    }
+
+    u.nextUntil = function (el, selector, include_self=false) {
+        /* Return the element's siblings until one matches the selector. */
+        const matches = [];
+        let sibling_el = el.nextElementSibling;
+        while (!_.isNil(sibling_el) && !sibling_el.matches(selector)) {
+            matches.push(sibling_el);
+            sibling_el = sibling_el.nextElementSibling;
+        }
+        return matches;
+    }
 
     u.addHyperlinks = function (text) {
         const list = text.match(URL_REGEX) || [];
@@ -125,34 +180,53 @@
     };
 
     u.renderImageURLs = function (obj) {
+        /* Returns a Promise which resolves once all images have been loaded.
+         */
         const list = obj.textContent.match(URL_REGEX) || [];
-        _.forEach(list, function (url) {
-            isImage(url).then(function (img) {
-                img.className = 'chat-image';
-                var anchors = sizzle(`a[href="${url}"]`, obj);
-                _.each(anchors, (a) => { a.innerHTML = img.outerHTML; });
-            });
-        });
-        return obj;
+        return Promise.all(
+            _.map(list, (url) =>
+                new Promise((resolve, reject) =>
+                    isImage(url).then(function (img) {
+                        // XXX: need to create a new image, otherwise the event
+                        // listener doesn't fire
+                        const i = new Image();
+                        i.className = 'chat-image';
+                        i.src = img.src;
+                        i.addEventListener('load', resolve);
+                        // We also resolve for non-images, otherwise the
+                        // Promise.all resolves prematurely.
+                        i.addEventListener('error', resolve);
+                        var anchors = sizzle(`a[href="${url}"]`, obj);
+                        _.each(anchors, (a) => {
+                            a.replaceChild(i, a.firstChild);
+                        });
+                    }).catch(resolve)
+                )
+            ))
     };
 
-    u.slideInAllElements = function (elements) {
+    u.slideInAllElements = function (elements, duration=300) {
         return Promise.all(
             _.map(
                 elements,
-                _.partial(u.slideIn, _, 600)
+                _.partial(u.slideIn, _, duration)
             ));
     };
 
-    u.slideToggleElement = function (el) {
-        if (_.includes(el.classList, 'collapsed')) {
-            return u.slideOut(el);
+    u.slideToggleElement = function (el, duration) {
+        if (_.includes(el.classList, 'collapsed') ||
+                _.includes(el.classList, 'hidden')) {
+            return u.slideOut(el, duration);
         } else {
-            return u.slideIn(el);
+            return u.slideIn(el, duration);
         }
     };
 
-    u.slideOut = function (el, duration=900) {
+    u.hasClass = function (className, el) {
+        return _.includes(el.classList, className);
+    };
+
+    u.slideOut = function (el, duration=200) {
         /* Shows/expands an element by sliding it out of itself
          *
          * Parameters:
@@ -166,42 +240,57 @@
                 reject(new Error(err));
                 return;
             }
-            let interval_marker = el.getAttribute('data-slider-marker');
-            if (interval_marker) {
+            const marker = el.getAttribute('data-slider-marker');
+            if (marker) {
                 el.removeAttribute('data-slider-marker');
-                window.clearInterval(interval_marker);
+                window.cancelAnimationFrame(marker);
             }
-            const end_height = calculateElementHeight(el);
+            const end_height = u.calculateElementHeight(el);
             if (window.converse_disable_effects) { // Effects are disabled (for tests)
                 el.style.height = end_height + 'px';
                 slideOutWrapup(el);
                 resolve();
                 return;
             }
+            if (!u.hasClass('collapsed', el) && !u.hasClass('hidden', el)) {
+                resolve();
+                return;
+            }
 
-            const step = calculateSlideStep(end_height),
-                  interval = end_height/duration*step;
-            let h = 0;
+            const steps = duration/17; // We assume 17ms per animation which is ~60FPS
+            let height = 0;
 
-            interval_marker = window.setInterval(function () {
-                h += step;
-                if (h < end_height) {
-                    el.style.height = h + 'px';
+            function draw () {
+                height += end_height/steps;
+                if (height < end_height) {
+                    el.style.height = height + 'px';
+                    el.setAttribute(
+                        'data-slider-marker',
+                        window.requestAnimationFrame(draw)
+                    );
                 } else {
                     // We recalculate the height to work around an apparent
                     // browser bug where browsers don't know the correct
                     // offsetHeight beforehand.
-                    el.style.height = calculateElementHeight(el) + 'px';
-                    window.clearInterval(interval_marker);
-                    slideOutWrapup(el);
+                    el.removeAttribute('data-slider-marker');
+                    el.style.height = u.calculateElementHeight(el) + 'px';
+                    el.style.overflow = "";
+                    el.style.height = "";
                     resolve();
                 }
-            }, interval);
-            el.setAttribute('data-slider-marker', interval_marker);
+            }
+            el.style.height = '0';
+            el.style.overflow = 'hidden';
+            el.classList.remove('hidden');
+            el.classList.remove('collapsed');
+            el.setAttribute(
+                'data-slider-marker',
+                window.requestAnimationFrame(draw)
+            );
         });
     };
 
-    u.slideIn = function (el, duration=600) {
+    u.slideIn = function (el, duration=200) {
         /* Hides/collapses an element by sliding it into itself. */
         return new Promise((resolve, reject) => {
             if (_.isNil(el)) {
@@ -209,60 +298,68 @@
                 logger.warn(err);
                 return reject(new Error(err));
             } else if (_.includes(el.classList, 'collapsed')) {
-                return resolve();
+                return resolve(el);
             } else if (window.converse_disable_effects) { // Effects are disabled (for tests)
                 el.classList.add('collapsed');
                 el.style.height = "";
-                return resolve();
+                return resolve(el);
             }
-            let interval_marker = el.getAttribute('data-slider-marker');
-            if (interval_marker) {
+            const marker = el.getAttribute('data-slider-marker');
+            if (marker) {
                 el.removeAttribute('data-slider-marker');
-                window.clearInterval(interval_marker);
+                window.cancelAnimationFrame(marker);
             }
-            let h = el.offsetHeight;
-            const step = calculateSlideStep(h),
-                  interval = h/duration*step;
+            const original_height = el.offsetHeight,
+                 steps = duration/17; // We assume 17ms per animation which is ~60FPS
+            let height = original_height;
 
             el.style.overflow = 'hidden';
 
-            interval_marker = window.setInterval(function () {
-                h -= step;
-                if (h > 0) {
-                    el.style.height = h + 'px';
+            function draw () { 
+                height -= original_height/steps;
+                if (height > 0) {
+                    el.style.height = height + 'px';
+                    el.setAttribute(
+                        'data-slider-marker',
+                        window.requestAnimationFrame(draw)
+                    );
                 } else {
                     el.removeAttribute('data-slider-marker');
-                    window.clearInterval(interval_marker);
                     el.classList.add('collapsed');
                     el.style.height = "";
-                    resolve();
+                    resolve(el);
                 }
-            }, interval);
-            el.setAttribute('data-slider-marker', interval_marker);
+            }
+            el.setAttribute(
+                'data-slider-marker',
+                window.requestAnimationFrame(draw)
+            );
         });
     };
+
+    function afterAnimationEnds (el, callback) {
+        el.classList.remove('visible');
+        if (_.isFunction(callback)) {
+            callback();
+        }
+    }
 
     u.fadeIn = function (el, callback) {
         if (_.isNil(el)) {
             logger.warn("Undefined or null element passed into fadeIn");
         }
-        if (window.converse_disable_effects) { // Effects are disabled (for tests)
+        if (window.converse_disable_effects) {
             el.classList.remove('hidden');
-            if (_.isFunction(callback)) {
-                callback();
-            }
-            return;
+            return afterAnimationEnds(el, callback);
         }
         if (_.includes(el.classList, 'hidden')) {
-            /* XXX: This doesn't appear to be working...
-                el.addEventListener("webkitAnimationEnd", _.partial(afterAnimationEnd, el, callback), false);
-                el.addEventListener("animationend", _.partial(afterAnimationEnd, el, callback), false);
-            */
-            setTimeout(_.partial(afterAnimationEnd, el, callback), 351);
             el.classList.add('visible');
             el.classList.remove('hidden');
+            el.addEventListener("webkitAnimationEnd", _.partial(afterAnimationEnds, el, callback));
+            el.addEventListener("animationend", _.partial(afterAnimationEnds, el, callback));
+            el.addEventListener("oanimationend", _.partial(afterAnimationEnds, el, callback));
         } else {
-            afterAnimationEnd(el, callback);
+            afterAnimationEnds(el, callback);
         }
     };
 
@@ -285,9 +382,10 @@
          * message, i.e. not a MAM archived one.
          */
         if (message instanceof Element) {
-            return !(sizzle('result[xmlns="'+Strophe.NS.MAM+'"]', message).length);
+            return !sizzle('result[xmlns="'+Strophe.NS.MAM+'"]', message).length &&
+                   !sizzle('delay[xmlns="'+Strophe.NS.DELAY+'"]', message).length;
         } else {
-            return !message.get('archive_id');
+            return !message.get('archive_id') && !message.get('delayed');
         }
     };
 
@@ -342,29 +440,40 @@
         }
     };
 
-    u.refreshWebkit = function () {
-        /* This works around a webkit bug. Refreshes the browser's viewport,
-         * otherwise chatboxes are not moved along when one is closed.
-         */
-        if (jQBrowser.webkit && window.requestAnimationFrame) {
-            window.requestAnimationFrame(function () {
-                var conversejs = document.getElementById('conversejs');
-                conversejs.style.display = 'none';
-                var tmp = conversejs.offsetHeight; // jshint ignore:line
-                conversejs.style.display = 'block';
-            });
-        }
-    };
-
-    u.stringToDOM = function (s) {
-        /* Converts an HTML string into a DOM element.
+    u.stringToNode = function (s) {
+        /* Converts an HTML string into a DOM Node.
+         * Expects that the HTML string has only one top-level element,
+         * i.e. not multiple ones.
          *
          * Parameters:
          *      (String) s - The HTML string
          */
         var div = document.createElement('div');
         div.innerHTML = s;
-        return div.childNodes;
+        return div.firstChild;
+    };
+
+    u.getOuterWidth = function (el, include_margin=false) {
+        var width = el.offsetWidth;
+        if (!include_margin) {
+            return width;
+        }
+        var style = window.getComputedStyle(el);
+        width += parseInt(style.marginLeft, 10) + parseInt(style.marginRight, 10);
+        return width;
+    };
+
+    u.stringToElement = function (s) {
+        /* Converts an HTML string into a DOM element.
+         * Expects that the HTML string has only one top-level element,
+         * i.e. not multiple ones.
+         *
+         * Parameters:
+         *      (String) s - The HTML string
+         */
+        var div = document.createElement('div');
+        div.innerHTML = s;
+        return div.firstElementChild;
     };
 
     u.matchesSelector = function (el, selector) {
@@ -540,6 +649,12 @@
     u.isVisible = function (el) {
         // XXX: Taken from jQuery's "visible" implementation
         return el.offsetWidth > 0 || el.offsetHeight > 0 || el.getClientRects().length > 0;
+    };
+
+    u.triggerEvent = function (el, name, type="Event", bubbles=true, cancelable=true) {
+        const evt = document.createEvent(type);
+        evt.initEvent(name, bubbles, cancelable);
+        el.dispatchEvent(evt);
     };
 
     return u;

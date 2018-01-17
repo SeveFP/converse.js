@@ -1,11 +1,12 @@
 (function (root, factory) {
-    define(['jquery.noconflict', 'converse', 'es6-promise',  'mock', 'wait-until-promise'], factory);
-}(this, function ($, converse_api, Promise, mock, waitUntilPromise) {
+    define(['converse', 'es6-promise',  'mock', 'wait-until-promise'], factory);
+}(this, function (converse_api, Promise, mock, waitUntilPromise) {
     var _ = converse_api.env._;
     var $msg = converse_api.env.$msg;
     var $pres = converse_api.env.$pres;
     var $iq = converse_api.env.$iq;
     var Strophe = converse_api.env.Strophe;
+    var u = converse_api.env.utils;
     var utils = {};
 
     if (typeof window.Promise === 'undefined') {
@@ -54,21 +55,20 @@
     };
 
     utils.openControlBox = function () {
-        var $toggle = $(".toggle-controlbox");
-        if (!$("#controlbox").is(':visible')) {
-            if (!$toggle.is(':visible')) {
-                $toggle[0].classList.remove('hidden');
-                $toggle.click();
-            } else {
-                $toggle.click();
+        var toggle = document.querySelector(".toggle-controlbox");
+        if (!u.isVisible(document.querySelector("#controlbox"))) {
+            if (!u.isVisible(toggle)) {
+                u.removeClass('hidden', toggle);
             }
+            toggle.click();
         }
         return this;
     };
 
     utils.closeControlBox = function () {
-        if ($("#controlbox").is(':visible')) {
-            $("#controlbox").find(".close-chatbox-button").click();
+        var controlbox = document.querySelector("#controlbox");
+        if (u.isVisible(controlbox)) {
+            controlbox.querySelector(".close-chatbox-button").click();
         }
         return this;
     };
@@ -76,15 +76,13 @@
     utils.openContactsPanel = function (converse) {
         this.openControlBox(converse);
         var cbview = converse.chatboxviews.get('controlbox');
-        var $tabs = cbview.$el.find('#controlbox-tabs');
-        $tabs.find('li').first().find('a').click();
+        cbview.el.querySelector('#controlbox-tabs li:first-child a').click();
     };
 
     utils.openRoomsPanel = function (converse) {
         utils.openControlBox();
         var cbview = converse.chatboxviews.get('controlbox');
-        var $tabs = cbview.$el.find('#controlbox-tabs');
-        $tabs.find('li').last().find('a').click();
+        cbview.el.querySelector('#controlbox-tabs li:last-child a').click();
     };
 
     utils.openChatBoxes = function (converse, amount) {
@@ -105,9 +103,9 @@
         this.openControlBox(_converse);
         this.openRoomsPanel(_converse);
         var roomspanel = _converse.chatboxviews.get('controlbox').roomspanel;
-        roomspanel.$el.find('input.new-chatroom-name').val(room);
-        roomspanel.$el.find('input.new-chatroom-server').val(server);
-        roomspanel.$el.find('form').submit();
+        roomspanel.el.querySelector('input.new-chatroom-name').value = room;
+        roomspanel.el.querySelector('input.new-chatroom-server').value = server;
+        roomspanel.el.querySelector('form input[type="submit"]').click();
         this.closeControlBox(_converse);
     };
 
@@ -120,9 +118,9 @@
             // We pretend this is a new room, so no disco info is returned.
             var IQ_id = converse.connection.sendIQ.firstCall.returnValue;
             var features_stanza = $iq({
-                    'from': 'lounge@localhost',
+                    'from': room+'@'+server,
                     'id': IQ_id,
-                    'to': 'dummy@localhost/desktop',
+                    'to': nick+'@'+server+'/desktop',
                     'type': 'error'
                 }).c('error', {'type': 'cancel'})
                     .c('item-not-found', {'xmlns': "urn:ietf:params:xml:ns:xmpp-stanzas"});
@@ -152,7 +150,7 @@
                     .c('item').attrs({
                         affiliation: 'member',
                         jid: converse.bare_jid,
-                        role: 'occupant'
+                        role: 'participant'
                     }).up()
                     .c('status').attrs({code:'110'});
                 converse.connection._dataRecv(utils.createRequest(presence));
@@ -170,7 +168,7 @@
 
     utils.clearChatBoxMessages = function (converse, jid) {
         var view = converse.chatboxviews.get(jid);
-        view.$el.find('.chat-content').empty();
+        view.el.querySelector('.chat-content').innerHTML = '';
         view.model.messages.reset();
         view.model.messages.browserStorage._clear();
     };
@@ -228,7 +226,7 @@
         /* Create grouped contacts
          */
         var i=0, j=0;
-        _.each(_.keys(mock.groups), $.proxy(function (name) {
+        _.each(_.keys(mock.groups), function (name) {
             j = i;
             for (i=j; i<j+mock.groups[name]; i++) {
                 converse.roster.create({
@@ -239,7 +237,7 @@
                     fullname: mock.cur_names[i]
                 });
             }
-        }, converse));
+        });
     };
 
     utils.createChatMessage = function (_converse, sender_jid, message) {
@@ -254,8 +252,12 @@
     }
 
     utils.sendMessage = function (chatboxview, message) {
-        chatboxview.$el.find('.chat-textarea').val(message);
-        chatboxview.$el.find('textarea.chat-textarea').trigger($.Event('keypress', {keyCode: 13}));
+        chatboxview.el.querySelector('.chat-textarea').value = message;
+        chatboxview.keyPressed({
+            target: chatboxview.el.querySelector('textarea.chat-textarea'),
+            preventDefault: _.noop,
+            keyCode: 13
+        });
     };
     return utils;
 }));
