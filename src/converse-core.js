@@ -315,7 +315,7 @@
             locales: [
                 'af', 'ca', 'de', 'es', 'en', 'fr', 'he',
                 'hu', 'id', 'it', 'ja', 'nb', 'nl',
-                'pl', 'pt_BR', 'ru', 'uk', 'zh'
+                'pl', 'pt_BR', 'ru', 'uk', 'zh_CN', 'zh_TW'
             ],
             message_carbons: true,
             message_storage: 'session',

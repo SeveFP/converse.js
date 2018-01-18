@@ -1,225 +1,212 @@
-# Portuguese translations for Converse.js package.
-# Copyright (C) 2013 Jan-Carel Brand
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Jan-Carel Brand
 # This file is distributed under the same license as the Converse.js package.
-# Matheus Figueiredo <matheus@tracy.com>, 2013.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Converse.js 0.6.3\n"
+"Project-Id-Version: Converse.js 3.2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-01-18 14:45+0100\n"
-"PO-Revision-Date: 2016-04-07 10:23+0000\n"
-"Last-Translator: Alan Meira <alan@engarte.com>\n"
-"Language-Team: Brazilian Portuguese\n"
-"Language: pt_BR\n"
+"PO-Revision-Date: 2018-01-18 10:53+0100\n"
+"Last-Translator: gensitu <pstew892@protonmail.com>\n"
+"Language-Team: Chinese (Simplified) <https://hosted.weblate.org/projects/"
+"conversejs/translations/zh_Hans/>\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"domain: converse\n"
-"lang: pt_BR\n"
-"plural_forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 2.19-dev\n"
 
 #: dist/converse-no-dependencies.js:7303
 msgid "The connection has dropped, attempting to reconnect."
-msgstr ""
+msgstr "连接已经掉线，正在尝试重新连接。"
 
 #: dist/converse-no-dependencies.js:7401
-#, fuzzy
 msgid "An error occurred while connecting to the chat server."
-msgstr "Ocorreu um erro enquanto tentava salvar o formulário"
+msgstr "连接至聊天服务器时出现问题。"
 
 #: dist/converse-no-dependencies.js:7408
 msgid "Your Jabber ID and/or password is incorrect. Please try again."
-msgstr ""
+msgstr "你的Jabber ID或密码不正确，请重新输入。"
 
 #: dist/converse-no-dependencies.js:7420
-#, javascript-format
+#, fuzzy, javascript-format
 msgid "Sorry, we could not connect to the XMPP host with domain: %1$s"
-msgstr ""
+msgstr "抱歉，我们未能连接至此XMPP服务器： "
 
 #: dist/converse-no-dependencies.js:7422
 msgid "The XMPP server did not offer a supported authentication mechanism"
-msgstr ""
+msgstr "XMPP服务器没有提供我们支持的验证方法"
 
 #: dist/converse-no-dependencies.js:8106
 #, javascript-format
 msgid "Sorry, there was an error while trying to add %1$s as a contact."
-msgstr ""
+msgstr "抱歉，添加%1$s为联系人时出现了问题。"
 
 #: dist/converse-no-dependencies.js:8290
 msgid "This client does not allow presence subscriptions"
 msgstr ""
 
 #: dist/converse-no-dependencies.js:8371
-#, fuzzy
 msgid "Click to hide these contacts"
-msgstr "Clique para remover o contato"
+msgstr "按此隐藏联系人"
 
 #: dist/converse-no-dependencies.js:12287
-#, fuzzy
 msgid "Close this chat box"
-msgstr "Clique para remover o contato"
+msgstr "关闭此聊天对话窗口"
 
 #: dist/converse-no-dependencies.js:12336
 msgid "Personal message"
-msgstr "Mensagem pessoal"
+msgstr "个人信息"
 
 #: dist/converse-no-dependencies.js:12337
 #: dist/converse-no-dependencies.js:18336
 msgid "Send"
-msgstr ""
+msgstr "发送"
 
 #: dist/converse-no-dependencies.js:12341
 #: dist/converse-no-dependencies.js:18339
-#, fuzzy
 msgid "You have unread messages"
-msgstr "Remover mensagens"
+msgstr "你有未读信息"
 
 #: dist/converse-no-dependencies.js:12588
 msgid "me"
-msgstr "eu"
+msgstr "我"
 
 #: dist/converse-no-dependencies.js:12638
 msgid "Typing from another device"
-msgstr ""
+msgstr "正在另一个装置上输入"
 
 #: dist/converse-no-dependencies.js:12640
-#, fuzzy
 msgid "is typing"
-msgstr "%1$s está digitando"
+msgstr "正在输入"
 
 #: dist/converse-no-dependencies.js:12646
 msgid "Stopped typing on the other device"
-msgstr ""
+msgstr "已在另一个装置上停止输入"
 
 #: dist/converse-no-dependencies.js:12648
-#, fuzzy
 msgid "has stopped typing"
-msgstr "%1$s está digitando"
+msgstr "已停止输入"
 
 #: dist/converse-no-dependencies.js:12653
 #: dist/converse-no-dependencies.js:12930
 #: dist/converse-no-dependencies.js:24246
-#, fuzzy
 msgid "has gone away"
-msgstr "Este contato está ausente"
+msgstr "已经离开"
 
 #: dist/converse-no-dependencies.js:12776
 #: dist/converse-no-dependencies.js:18954
 msgid "Remove messages"
-msgstr "Remover mensagens"
+msgstr "删除信息"
 
 #: dist/converse-no-dependencies.js:12776
 msgid "Write in the third person"
-msgstr "Escrever em terceira pessoa"
+msgstr "以第三人称输入"
 
 #: dist/converse-no-dependencies.js:12776
 #: dist/converse-no-dependencies.js:18954
 msgid "Show this menu"
-msgstr "Mostrar o menu"
+msgstr "显示此菜单"
 
 #: dist/converse-no-dependencies.js:12869
 msgid "Are you sure you want to clear the messages from this chat box?"
-msgstr "Tem certeza que deseja limpar as mensagens dessa caixa?"
+msgstr "你确定要清除对话窗口的所有信息？"
 
 #: dist/converse-no-dependencies.js:12928
 #: dist/converse-no-dependencies.js:24244
-#, fuzzy
 msgid "has gone offline"
-msgstr "Este contato está offline"
+msgstr "已离线"
 
 #: dist/converse-no-dependencies.js:12932
 #: dist/converse-no-dependencies.js:24248
-#, fuzzy
 msgid "is busy"
-msgstr "ocupado"
+msgstr "在忙碌"
 
 #: dist/converse-no-dependencies.js:12968
-#, fuzzy
 msgid "Clear all messages"
-msgstr "Mensagem pessoal"
+msgstr "清除所有信息"
 
 #: dist/converse-no-dependencies.js:12969
 msgid "Insert a smiley"
-msgstr ""
+msgstr "输入表情"
 
 #: dist/converse-no-dependencies.js:12970
 msgid "Start a call"
-msgstr ""
+msgstr "开始语音通话"
 
 #: dist/converse-no-dependencies.js:13249
 msgid "Login"
-msgstr ""
+msgstr "登录"
 
 #: dist/converse-no-dependencies.js:13271
 msgid "Jabber ID:"
-msgstr ""
+msgstr "Jabber ID："
 
 #: dist/converse-no-dependencies.js:13277
 msgid "Password:"
-msgstr "Senha:"
+msgstr "密码："
 
 #: dist/converse-no-dependencies.js:13279
-#, fuzzy
 msgid "password"
-msgstr "Senha:"
+msgstr "密码"
 
 #: dist/converse-no-dependencies.js:13283
 #: dist/converse-no-dependencies.js:19614
 msgid "Submit"
-msgstr "Enviar"
+msgstr "提交"
 
 #: dist/converse-no-dependencies.js:13289
-#, fuzzy
 msgid "Click here to log in anonymously"
-msgstr "Essa sala não é anônima"
+msgstr "按此以匿名登录"
 
 #: dist/converse-no-dependencies.js:13584
 msgid "This contact is busy"
-msgstr "Este contato está ocupado"
+msgstr "此联系人正在忙碌"
 
 #: dist/converse-no-dependencies.js:13585
 msgid "This contact is online"
-msgstr "Este contato está online"
+msgstr "此联系人在线"
 
 #: dist/converse-no-dependencies.js:13586
 msgid "This contact is offline"
-msgstr "Este contato está offline"
+msgstr "此联系人不在线"
 
 #: dist/converse-no-dependencies.js:13587
 msgid "This contact is unavailable"
-msgstr "Este contato está indisponível"
+msgstr "此联系人不可用"
 
 #: dist/converse-no-dependencies.js:13588
 msgid "This contact is away for an extended period"
-msgstr "Este contato está ausente por um longo período"
+msgstr "此联系人已离开了一段长时间"
 
 #: dist/converse-no-dependencies.js:13589
 msgid "This contact is away"
-msgstr "Este contato está ausente"
+msgstr "此联系人已离开"
 
 #: dist/converse-no-dependencies.js:13592
 #: dist/converse-no-dependencies.js:15086
 #: dist/converse-no-dependencies.js:15605
 msgid "Contacts"
-msgstr "Contatos"
+msgstr "联系人"
 
 #: dist/converse-no-dependencies.js:13594
 msgid "Groups"
-msgstr ""
+msgstr "群组"
 
 #: dist/converse-no-dependencies.js:13596
 msgid "My contacts"
-msgstr "Meus contatos"
+msgstr "我的联系人"
 
 #: dist/converse-no-dependencies.js:13598
 msgid "Pending contacts"
-msgstr "Contados pendentes"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:13600
 msgid "Contact requests"
-msgstr "Solicitação de contatos"
+msgstr "联系人请求"
 
 #: dist/converse-no-dependencies.js:13602
 msgid "Ungrouped"
@@ -227,7 +214,7 @@ msgstr ""
 
 #: dist/converse-no-dependencies.js:13661
 msgid "Filter"
-msgstr ""
+msgstr "筛选"
 
 #: dist/converse-no-dependencies.js:13664
 msgid "State"
@@ -239,74 +226,72 @@ msgstr ""
 
 #: dist/converse-no-dependencies.js:13666
 msgid "Unread"
-msgstr ""
+msgstr "未读"
 
 #: dist/converse-no-dependencies.js:13667
 #: dist/converse-no-dependencies.js:15435
 msgid "Online"
-msgstr "Online"
+msgstr "在线"
 
 #: dist/converse-no-dependencies.js:13668
 msgid "Chatty"
-msgstr ""
+msgstr "经常联系"
 
 #: dist/converse-no-dependencies.js:13669
 #: dist/converse-no-dependencies.js:15436
 msgid "Busy"
-msgstr "Ocupado"
+msgstr "忙碌"
 
 #: dist/converse-no-dependencies.js:13670
 #: dist/converse-no-dependencies.js:15437
 msgid "Away"
-msgstr "Ausente"
+msgstr "离开"
 
 #: dist/converse-no-dependencies.js:13671
 msgid "Extended Away"
-msgstr ""
+msgstr "长期离开"
 
 #: dist/converse-no-dependencies.js:13672
 #: dist/converse-no-dependencies.js:15438
 msgid "Offline"
-msgstr "Offline"
+msgstr "离线"
 
 #: dist/converse-no-dependencies.js:13847
 #: dist/converse-no-dependencies.js:13870
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "Click to remove %1$s as a contact"
-msgstr "Clique para remover o contato"
+msgstr "按此删除%1$s为联络人"
 
 #: dist/converse-no-dependencies.js:13853
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "Click to accept the contact request from %1$s"
-msgstr "Clique para remover o contato"
+msgstr "按此接受%1$s的联系人请求"
 
 #: dist/converse-no-dependencies.js:13854
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "Click to decline the contact request from %1$s"
-msgstr "Clique para remover o contato"
+msgstr "按此拒绝%1$s的联系人请求"
 
 #: dist/converse-no-dependencies.js:13869
 msgid "Click to chat with this contact"
-msgstr "Clique para conversar com o contato"
+msgstr "按此与此联系人聊天"
 
 #: dist/converse-no-dependencies.js:13871
 msgid "Name"
-msgstr ""
+msgstr "名称"
 
 #: dist/converse-no-dependencies.js:13915
-#, fuzzy
 msgid "Are you sure you want to remove this contact?"
-msgstr "Clique para remover o contato"
+msgstr "你确定要删除此联系人吗？"
 
 #: dist/converse-no-dependencies.js:13932
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "Sorry, there was an error while trying to remove %1$s as a contact."
-msgstr "Clique para remover o contato"
+msgstr "抱歉，删除%1$s为联系人时出现了问题。"
 
 #: dist/converse-no-dependencies.js:13954
-#, fuzzy
 msgid "Are you sure you want to decline this contact request?"
-msgstr "Clique para remover o contato"
+msgstr "你确定要拒绝此联系人请求吗？"
 
 #. For translators: the %1$s part gets replaced with the status
 #. Example, I am online
@@ -314,177 +299,167 @@ msgstr "Clique para remover o contato"
 #: dist/converse-no-dependencies.js:14860
 #, javascript-format
 msgid "I am %1$s"
-msgstr "Estou %1$s"
+msgstr "我正%1$s"
 
 #: dist/converse-no-dependencies.js:14793
 #: dist/converse-no-dependencies.js:14867
 msgid "Click here to write a custom status message"
-msgstr "Clique aqui para customizar a mensagem de status"
+msgstr "按此填写个性签名"
 
 #: dist/converse-no-dependencies.js:14794
 #: dist/converse-no-dependencies.js:14868
 msgid "Click to change your chat status"
-msgstr "Clique para mudar seu status no chat"
+msgstr "按此更改你的聊天状态"
 
 #: dist/converse-no-dependencies.js:14820
 msgid "Custom status"
-msgstr "Status customizado"
+msgstr "个性签名"
 
 #: dist/converse-no-dependencies.js:14821
 #: dist/converse-no-dependencies.js:19243
 #: dist/converse-no-dependencies.js:21300
 msgid "Save"
-msgstr "Salvar"
+msgstr "保存"
 
 #: dist/converse-no-dependencies.js:14843
 #: dist/converse-no-dependencies.js:14853
 msgid "online"
-msgstr "online"
+msgstr "在线"
 
 #: dist/converse-no-dependencies.js:14845
 msgid "busy"
-msgstr "ocupado"
+msgstr "忙碌"
 
 #: dist/converse-no-dependencies.js:14847
 msgid "away for long"
-msgstr "ausente a bastante tempo"
+msgstr "长期离开"
 
 #: dist/converse-no-dependencies.js:14849
 msgid "away"
-msgstr "ausente"
+msgstr "离开"
 
 #: dist/converse-no-dependencies.js:14851
-#, fuzzy
 msgid "offline"
-msgstr "Offline"
+msgstr "离线"
 
 #: dist/converse-no-dependencies.js:15351
-#, fuzzy
 msgid "Username"
-msgstr "Usuário XMPP/Jabber:"
+msgstr "用户名"
 
 #: dist/converse-no-dependencies.js:15351
 msgid "user@domain"
-msgstr ""
+msgstr "用户@域名"
 
 #: dist/converse-no-dependencies.js:15359
 #: dist/converse-no-dependencies.js:15554
 msgid "Please enter a valid XMPP address"
-msgstr ""
+msgstr "请输入有效的XMPP地址"
 
 #: dist/converse-no-dependencies.js:15439
-#, fuzzy
 msgid "Log out"
-msgstr "Entrar"
+msgstr "登出"
 
 #: dist/converse-no-dependencies.js:15446
 msgid "Click to add new chat contacts"
-msgstr "Clique para adicionar novos contatos ao chat"
+msgstr "按此添加聊天联系人"
 
 #: dist/converse-no-dependencies.js:15447
 msgid "Add a contact"
-msgstr "Adicionar contato"
+msgstr "添加联系人"
 
 #: dist/converse-no-dependencies.js:15482
 msgid "Contact name"
-msgstr "Nome do contato"
+msgstr "联系人名称"
 
 #: dist/converse-no-dependencies.js:15483
 msgid "Search"
-msgstr "Procurar"
+msgstr "搜索"
 
 #: dist/converse-no-dependencies.js:15488
 #: dist/converse-no-dependencies.js:15555
 msgid "e.g. user@example.org"
-msgstr ""
+msgstr "例如，user@example.org"
 
 #: dist/converse-no-dependencies.js:15489
 #: dist/converse-no-dependencies.js:15556
 msgid "Add"
-msgstr "Adicionar"
+msgstr "添加"
 
 #: dist/converse-no-dependencies.js:15520
 msgid "No users found"
-msgstr "Não foram encontrados usuários"
+msgstr "找不到用户"
 
 #: dist/converse-no-dependencies.js:15524
 msgid "Click to add as a chat contact"
-msgstr "Clique para adicionar como um contato do chat"
+msgstr "按此添加为聊天联系人"
 
 #: dist/converse-no-dependencies.js:15605
 msgid "Toggle chat"
-msgstr "Alternar bate-papo"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:18096
 msgid "This room is not anonymous"
-msgstr "Essa sala não é anônima"
+msgstr "此聊天室不是匿名的"
 
 #: dist/converse-no-dependencies.js:18097
 msgid "This room now shows unavailable members"
-msgstr "Agora esta sala mostra membros indisponíveis"
+msgstr "此聊天室显示不可用的成员"
 
 #: dist/converse-no-dependencies.js:18098
 msgid "This room does not show unavailable members"
-msgstr "Essa sala não mostra membros indisponíveis"
+msgstr "此聊天室不显示不可用的成员"
 
 #: dist/converse-no-dependencies.js:18099
-#, fuzzy
 msgid "The room configuration has changed"
-msgstr "Configuraçõs não relacionadas à privacidade mudaram"
+msgstr "此聊天室设置已被更改"
 
 #: dist/converse-no-dependencies.js:18100
 msgid "Room logging is now enabled"
-msgstr "O log da sala está ativado"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:18101
 msgid "Room logging is now disabled"
-msgstr "O log da sala está desativado"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:18102
-#, fuzzy
 msgid "This room is now no longer anonymous"
-msgstr "Esse sala é não anônima"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:18103
 msgid "This room is now semi-anonymous"
-msgstr "Essa sala agora é semi anônima"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:18104
 msgid "This room is now fully-anonymous"
-msgstr "Essa sala agora é totalmente anônima"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:18105
 msgid "A new room has been created"
-msgstr "Uma nova sala foi criada"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:18108
 msgid "You have been banned from this room"
-msgstr "Você foi banido dessa sala"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:18109
 msgid "You have been kicked from this room"
-msgstr "Você foi expulso dessa sala"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:18110
 msgid "You have been removed from this room because of an affiliation change"
-msgstr "Você foi removido da sala devido a uma mudança de associação"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:18111
 msgid ""
 "You have been removed from this room because the room has changed to members-"
 "only and you're not a member"
 msgstr ""
-"Você foi removido da sala porque ela foi mudada para somente membrose você "
-"não é um membro"
 
 #: dist/converse-no-dependencies.js:18112
-#, fuzzy
 msgid ""
 "You have been removed from this room because the MUC (Multi-user chat) "
 "service is being shut down"
 msgstr ""
-"Você foi removido da sala devido a MUC (Multi-user chat)o serviço está sendo "
-"desligado"
 
 #. XXX: Note the triple underscore function and not double
 #. * underscore.
@@ -497,73 +472,71 @@ msgstr ""
 #. * strings are picked up by the translation machinery.
 #.
 #: dist/converse-no-dependencies.js:18125
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "%1$s has been banned"
-msgstr "%1$s foi banido"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:18126
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "%1$s's nickname has changed"
-msgstr "%1$s foi banido"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:18127
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "%1$s has been kicked out"
-msgstr "%1$s foi expulso"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:18128
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "%1$s has been removed because of an affiliation change"
-msgstr "<srtong>%1$s foi removido por causa de troca de associação"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:18129
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "%1$s has been removed for not being a member"
-msgstr "%1$s foi removido por não ser um membro"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:18132
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "Your nickname has been automatically set to %1$s"
-msgstr "Seu apelido foi mudado"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:18133
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "Your nickname has been changed to %1$s"
-msgstr "Seu apelido foi mudado"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:18335
 msgid "Message"
-msgstr "Mensagem"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:18364
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "%1$s is no longer a moderator."
-msgstr "Esse usuário é o moderador"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:18368
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "%1$s has been given a voice again."
-msgstr "%1$s foi expulso"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:18372
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "%1$s has been muted."
-msgstr "%1$s foi banido"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:18376
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "%1$s is now a moderator."
-msgstr "Esse usuário é o moderador"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:18384
-#, fuzzy
 msgid "Close and leave this room"
-msgstr "CLique para abrir a sala"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:18385
-#, fuzzy
 msgid "Configure this room"
-msgstr "CLique para abrir a sala"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:18442
 msgid "Hide the list of occupants"
@@ -577,9 +550,8 @@ msgid ""
 msgstr ""
 
 #: dist/converse-no-dependencies.js:18892
-#, fuzzy
 msgid "Are you sure you want to clear the messages from this room?"
-msgstr "Você não é membro dessa sala"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:18901
 msgid "Error: could not execute the command"
@@ -590,23 +562,20 @@ msgid "Change user's affiliation to admin"
 msgstr ""
 
 #: dist/converse-no-dependencies.js:18954
-#, fuzzy
 msgid "Ban user from room"
-msgstr "Banir usuário do chat"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:18954
 msgid "Change user role to participant"
 msgstr ""
 
 #: dist/converse-no-dependencies.js:18954
-#, fuzzy
 msgid "Kick user from room"
-msgstr "Expulsar usuário do chat"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:18954
-#, fuzzy
 msgid "Write in 3rd person"
-msgstr "Escrever em terceira pessoa"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:18954
 msgid "Grant membership to a user"
@@ -625,18 +594,16 @@ msgid "Grant moderator role to user"
 msgstr ""
 
 #: dist/converse-no-dependencies.js:18954
-#, fuzzy
 msgid "Grant ownership of this room"
-msgstr "Você não é membro dessa sala"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:18954
 msgid "Revoke user's membership"
 msgstr ""
 
 #: dist/converse-no-dependencies.js:18954
-#, fuzzy
 msgid "Set room subject"
-msgstr "Definir tópico do chat"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:18954
 msgid "Set room subject (alias for /subject)"
@@ -650,7 +617,7 @@ msgstr ""
 #: dist/converse-no-dependencies.js:21301
 #: dist/converse-no-dependencies.js:23206
 msgid "Cancel"
-msgstr "Cancelar"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:19563
 msgid ""
@@ -665,25 +632,24 @@ msgstr ""
 #: dist/converse-no-dependencies.js:19590
 #: dist/converse-no-dependencies.js:20502
 msgid "Nickname"
-msgstr "Apelido"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:19591
-#, fuzzy
 msgid "Enter room"
-msgstr "Sala aberta"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:19612
 msgid "This chatroom requires a password"
-msgstr "Esse chat precisa de senha"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:19613
 msgid "Password: "
-msgstr "Senha: "
+msgstr ""
 
 #: dist/converse-no-dependencies.js:19755
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "This action was done by %1$s."
-msgstr "Seu apelido foi mudado"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:19759
 #: dist/converse-no-dependencies.js:19775
@@ -692,104 +658,93 @@ msgid "The reason given is: \"%1$s\"."
 msgstr ""
 
 #: dist/converse-no-dependencies.js:19791
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "%1$s has left and re-entered the room."
-msgstr "CLique para abrir a sala"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:19797
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "%1$s has entered the room. \"%2$s\""
-msgstr "CLique para abrir a sala"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:19799
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "%1$s has entered the room."
-msgstr "CLique para abrir a sala"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:19828
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "%1$s has entered and left the room. \"%2$s\""
-msgstr "CLique para abrir a sala"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:19830
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "%1$s has entered and left the room."
-msgstr "CLique para abrir a sala"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:19842
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "%1$s has left the room. \"%2$s\""
-msgstr "CLique para abrir a sala"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:19844
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "%1$s has left the room."
-msgstr "CLique para abrir a sala"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:19913
-#, fuzzy
 msgid "You are not on the member list of this room."
-msgstr "Você não é membro dessa sala"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:19915
-#, fuzzy
 msgid "You have been banned from this room."
-msgstr "Você foi banido dessa sala"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:19919
-#, fuzzy
 msgid "No nickname was specified."
-msgstr "Você não escolheu um apelido "
+msgstr ""
 
 #: dist/converse-no-dependencies.js:19923
-#, fuzzy
 msgid "You are not allowed to create new rooms."
-msgstr "Você não tem permitição de criar novas salas"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:19925
-#, fuzzy
 msgid "Your nickname doesn't conform to this room's policies."
-msgstr "Seu apelido não está de acordo com as regras da sala"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:19929
-#, fuzzy
 msgid "This room does not (yet) exist."
-msgstr "A sala não existe (ainda)"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:19931
-#, fuzzy
 msgid "This room has reached its maximum number of occupants."
-msgstr "A sala atingiu o número máximo de ocupantes"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20052
 #, javascript-format
 msgid "Topic set by %1$s to: %2$s"
-msgstr "Topico definido por %1$s para: %2$s"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20168
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "Click to mention %1$s in your message."
-msgstr "CLique para abrir a sala"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20169
-#, fuzzy
 msgid "This user is a moderator."
-msgstr "Esse usuário é o moderador"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20170
-#, fuzzy
 msgid "This user can send messages in this room."
-msgstr "Esse usuário pode enviar mensagens nessa sala"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20171
-#, fuzzy
 msgid "This user can NOT send messages in this room."
-msgstr "Esse usuário NÃO pode enviar mensagens nessa sala"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20230
-#, fuzzy
 msgid "Occupants"
-msgstr "Ocupantes:"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20247
 #: dist/converse-no-dependencies.js:20451
@@ -797,14 +752,13 @@ msgid "Invite"
 msgstr ""
 
 #: dist/converse-no-dependencies.js:20266
-#, fuzzy
 msgid "Features"
-msgstr "Recursos:"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20267
 #: dist/converse-no-dependencies.js:20702
 msgid "Hidden"
-msgstr "Escondido"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20268
 msgid "Message archiving"
@@ -817,22 +771,20 @@ msgstr ""
 #: dist/converse-no-dependencies.js:20270
 #: dist/converse-no-dependencies.js:20704
 msgid "Moderated"
-msgstr "Moderado"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20271
 #: dist/converse-no-dependencies.js:20705
 msgid "Non-anonymous"
-msgstr "Não anônimo"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20272
-#, fuzzy
 msgid "Open"
-msgstr "Sala aberta"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20273
-#, fuzzy
 msgid "Password protected"
-msgstr "Senha: "
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20274
 msgid "Persistent"
@@ -841,69 +793,61 @@ msgstr ""
 #: dist/converse-no-dependencies.js:20275
 #: dist/converse-no-dependencies.js:20708
 msgid "Public"
-msgstr "Público"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20276
 #: dist/converse-no-dependencies.js:20709
 msgid "Semi-anonymous"
-msgstr "Semi anônimo"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20277
-#, fuzzy
 msgid "Temporary"
-msgstr "Sala temporária"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20278
 #: dist/converse-no-dependencies.js:20711
 msgid "Unmoderated"
-msgstr "Sem moderação"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20279
-#, fuzzy
 msgid "No password"
-msgstr "Senha:"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20280
-#, fuzzy
 msgid "This room is not publicly searchable"
-msgstr "Essa sala não é anônima"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20281
 msgid "Messages are archived on the server"
 msgstr ""
 
 #: dist/converse-no-dependencies.js:20282
-#, fuzzy
 msgid "This room is restricted to members only"
-msgstr "A sala atingiu o número máximo de ocupantes"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20283
-#, fuzzy
 msgid "This room is being moderated"
-msgstr "Esse usuário é o moderador"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20284
 msgid "All other room occupants can see your XMPP username"
 msgstr ""
 
 #: dist/converse-no-dependencies.js:20285
-#, fuzzy
 msgid "Anyone can join this room"
-msgstr "CLique para abrir a sala"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20286
-#, fuzzy
 msgid "This room requires a password before entry"
-msgstr "Esse chat precisa de senha"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20287
 msgid "This room persists even if it's unoccupied"
 msgstr ""
 
 #: dist/converse-no-dependencies.js:20288
-#, fuzzy
 msgid "This room is publicly searchable"
-msgstr "Essa sala não é anônima"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20289
 msgid "Only moderators can see your XMPP username"
@@ -914,14 +858,12 @@ msgid "This room will disappear once the last person leaves"
 msgstr ""
 
 #: dist/converse-no-dependencies.js:20291
-#, fuzzy
 msgid "This room is not being moderated"
-msgstr "Essa sala não é anônima"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20292
-#, fuzzy
 msgid "This room does not require a password upon entry"
-msgstr "Esse chat precisa de senha"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20428
 #, javascript-format
@@ -936,50 +878,49 @@ msgstr ""
 
 #: dist/converse-no-dependencies.js:20501
 msgid "Room name"
-msgstr "Nome da sala"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20503
 msgid "Server"
-msgstr "Server"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20504
-#, fuzzy
 msgid "Join Room"
-msgstr "Entrar"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20505
 msgid "Show rooms"
-msgstr "Mostar salas"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20566
 msgid "Rooms"
-msgstr "Salas"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20597
 #, fuzzy
 msgid "No rooms found"
-msgstr "Não foram encontrados usuários"
+msgstr "找不到用户"
 
 #: dist/converse-no-dependencies.js:20614
 #, fuzzy
 msgid "Rooms found"
-msgstr "Salas em %1$s"
+msgstr "找不到用户"
 
 #: dist/converse-no-dependencies.js:20624
 #: dist/converse-no-dependencies.js:21567
 #: dist/converse-no-dependencies.js:21905
 msgid "Click to open this room"
-msgstr "CLique para abrir a sala"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20625
 #: dist/converse-no-dependencies.js:21564
 #: dist/converse-no-dependencies.js:21903
 msgid "Show more information on this room"
-msgstr "Mostrar mais informações nessa sala"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20697
 msgid "Description:"
-msgstr "Descrição:"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20698
 msgid "Room Address (JID):"
@@ -987,31 +928,31 @@ msgstr ""
 
 #: dist/converse-no-dependencies.js:20699
 msgid "Occupants:"
-msgstr "Ocupantes:"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20700
 msgid "Features:"
-msgstr "Recursos:"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20701
 msgid "Requires authentication"
-msgstr "Requer autenticação"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20703
 msgid "Requires an invitation"
-msgstr "Requer um convite"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20706
 msgid "Open room"
-msgstr "Sala aberta"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20707
 msgid "Permanent room"
-msgstr "Sala permanente"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20710
 msgid "Temporary room"
-msgstr "Sala temporária"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:20810
 #, javascript-format
@@ -1044,9 +985,9 @@ msgid "What should your nickname for this room be?"
 msgstr ""
 
 #: dist/converse-no-dependencies.js:21373
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "Are you sure you want to remove the bookmark \"%1$s\"?"
-msgstr "Clique para remover o contato"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:21485
 msgid "Sorry, something went wrong while trying to save your bookmark."
@@ -1054,9 +995,8 @@ msgstr ""
 
 #: dist/converse-no-dependencies.js:21561
 #: dist/converse-no-dependencies.js:21900
-#, fuzzy
 msgid "Leave this room"
-msgstr "CLique para abrir a sala"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:21562
 msgid "Remove this bookmark"
@@ -1064,49 +1004,45 @@ msgstr ""
 
 #: dist/converse-no-dependencies.js:21563
 #: dist/converse-no-dependencies.js:21901
-#, fuzzy
 msgid "Unbookmark this room"
-msgstr "CLique para abrir a sala"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:21602
-#, fuzzy
 msgid "Click to toggle the bookmarks list"
-msgstr "CLique para abrir a sala"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:21603
 msgid "Bookmarks"
 msgstr ""
 
 #: dist/converse-no-dependencies.js:21936
-#, fuzzy
 msgid "Click to toggle the rooms list"
-msgstr "CLique para abrir a sala"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:21937
-#, fuzzy
 msgid "Open Rooms"
-msgstr "Sala aberta"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:21970
-#, fuzzy, javascript-format
+#, javascript-format
 msgid "Are you sure you want to leave the room \"%1$s\"?"
-msgstr "Clique para remover o contato"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:22744
 msgid "Re-establishing encrypted session"
-msgstr "Reestabelecendo sessão criptografada"
+msgstr ""
 
 #. We need to generate a new key and instance tag
 #: dist/converse-no-dependencies.js:22755
 msgid "Generating private key."
-msgstr "Gerando chave-privada."
+msgstr ""
 
 #: dist/converse-no-dependencies.js:22755
 msgid "Your browser might become unresponsive."
-msgstr "Seu navegador pode parar de responder."
+msgstr ""
 
 #: dist/converse-no-dependencies.js:22798
-#, fuzzy, javascript-format
+#, javascript-format
 msgid ""
 "Authentication request from %1$s\n"
 "\n"
@@ -1115,56 +1051,44 @@ msgid ""
 "\n"
 "%2$s"
 msgstr ""
-"Pedido de autenticação de %1$s\n"
-"\n"
-"Seu contato está tentando verificar sua identidade, perguntando a questã "
-"abaixo.\n"
-"\n"
-"%2$s"
 
 #: dist/converse-no-dependencies.js:22807
 msgid "Could not verify this user's identify."
-msgstr "Não foi possível verificar a identidade deste usuário."
+msgstr ""
 
 #: dist/converse-no-dependencies.js:22861
-#, fuzzy
 msgid "Exchanging private key with contact."
-msgstr "Trocando chave-privada com o contato."
+msgstr ""
 
 #: dist/converse-no-dependencies.js:22964
 msgid "Your messages are not encrypted anymore"
-msgstr "Suas mensagens não estão mais criptografadas"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:22966
-#, fuzzy
 msgid ""
 "Your messages are now encrypted but your contact's identity has not been "
 "verified."
 msgstr ""
-"Suas mensagens estão agora criptografadas mas a identidade do contatonão foi "
-"confirmada."
 
 #: dist/converse-no-dependencies.js:22968
-#, fuzzy
 msgid "Your contact's identify has been verified."
-msgstr "A identidade do contato foi verificada."
+msgstr ""
 
 #: dist/converse-no-dependencies.js:22970
-#, fuzzy
 msgid "Your contact has ended encryption on their end, you should do the same."
-msgstr "Seu contato parou de usar criptografia, você deveria fazer o mesmo."
+msgstr ""
 
 #: dist/converse-no-dependencies.js:22980
 msgid "Your message could not be sent"
-msgstr "Sua mensagem não pode ser enviada"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:22982
 msgid "We received an unencrypted message"
-msgstr "Recebemos uma mensagem não-criptografada"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:22984
 msgid "We received an unreadable encrypted message"
-msgstr "Recebemos uma mensagem não-criptografada ilegível"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:23010
 #, javascript-format
@@ -1179,18 +1103,8 @@ msgid ""
 "If you have confirmed that the fingerprints match, click OK, otherwise click "
 "Cancel."
 msgstr ""
-"Aqui estão as assinaturas digitais, por favor confirme elas com %1$s, fora "
-"deste chat.\n"
-"\n"
-"Assinatura para você, %2$s: %3$s\n"
-"\n"
-"Assinatura para %1$s: %4$s\n"
-"\n"
-"Se você tiver confirmado que as assinaturas conferem, clique OK, caso "
-"contrário, clique Cancelar."
 
 #: dist/converse-no-dependencies.js:23022
-#, fuzzy
 msgid ""
 "You will be prompted to provide a security question and then an answer to "
 "that question.\n"
@@ -1198,72 +1112,60 @@ msgid ""
 "Your contact will then be prompted the same question and if they type the "
 "exact same answer (case sensitive), their identity will be verified."
 msgstr ""
-"Será solicitado que você informe uma pergunta de segurança e também uma "
-"resposta.\n"
-"\n"
-"Nós iremos, então, transfeir a pergunta para seu contato e caso ele envie "
-"corretamente a mesma resposta (caso sensitivo), a identidade dele será "
-"verificada."
 
 #: dist/converse-no-dependencies.js:23023
 msgid "What is your security question?"
-msgstr "Qual é a sua pergunta de segurança?"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:23026
 msgid "What is the answer to the security question?"
-msgstr "Qual é a resposta para a pergunta de segurança?"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:23030
 msgid "Invalid authentication scheme provided"
-msgstr "Schema de autenticação fornecido é inválido"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:23047
 msgid "Your messages are not encrypted. Click here to enable OTR encryption."
 msgstr ""
-"Suas mensagens não estão criptografadas. Clique aqui para habilitar "
-"criptografia OTR."
 
 #: dist/converse-no-dependencies.js:23049
-#, fuzzy
 msgid "Your messages are encrypted, but your contact has not been verified."
 msgstr ""
-"Suas mensagens estão criptografadas, mas seu contato não foi verificado."
 
 #: dist/converse-no-dependencies.js:23051
-#, fuzzy
 msgid "Your messages are encrypted and your contact verified."
-msgstr "Suas mensagens estão criptografadas e seu contato verificado."
+msgstr ""
 
 #: dist/converse-no-dependencies.js:23053
-#, fuzzy
 msgid ""
 "Your contact has closed their end of the private session, you should do the "
 "same"
-msgstr "Seu contato fechou a sessão privada, você deveria fazer o mesmo"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:23072
 msgid "End encrypted conversation"
-msgstr "Finalizar conversa criptografada"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:23073
 msgid "Refresh encrypted conversation"
-msgstr "Atualizar conversa criptografada"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:23074
 msgid "Start encrypted conversation"
-msgstr "Iniciar conversa criptografada"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:23075
 msgid "Verify with fingerprints"
-msgstr "Verificar com assinatura digital"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:23076
 msgid "Verify with SMP"
-msgstr "Verificar com SMP"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:23077
 msgid "What's this?"
-msgstr "O que é isso?"
+msgstr ""
 
 #. Translation aware constants
 #. ---------------------------
@@ -1273,19 +1175,19 @@ msgstr "O que é isso?"
 #. the module.
 #: dist/converse-no-dependencies.js:23109
 msgid "unencrypted"
-msgstr "não-criptografado"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:23110
 msgid "unverified"
-msgstr "não-verificado"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:23111
 msgid "verified"
-msgstr "verificado"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:23112
 msgid "finished"
-msgstr "finalizado"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:23128
 msgid "Don't have a chat account?"
@@ -1389,9 +1291,8 @@ msgid "%1$s says"
 msgstr ""
 
 #: dist/converse-no-dependencies.js:24250
-#, fuzzy
 msgid "has come online"
-msgstr "Este contato está offline"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:24267
 msgid "wants to be your contact"
@@ -1403,112 +1304,16 @@ msgid "Minimize this chat box"
 msgstr ""
 
 #: dist/converse-no-dependencies.js:24738
-#, fuzzy
 msgid "Click to restore this chat"
-msgstr "Clique para remover o contato"
+msgstr ""
 
 #: dist/converse-no-dependencies.js:24925
 msgid "Minimized"
-msgstr "Minimizado"
+msgstr ""
 
-#~ msgid "No rooms on %1$s"
-#~ msgstr "Sem salas em %1$s"
-
-#, fuzzy
-#~ msgid "Close this box"
-#~ msgstr "Clique para remover o contato"
-
-#, fuzzy
-#~ msgid "XMPP Username:"
-#~ msgstr "Usuário XMPP/Jabber:"
-
-#~ msgid "Log In"
-#~ msgstr "Entrar"
-
-#~ msgid "Sign in"
-#~ msgstr "Conectar-se"
-
-#, fuzzy
-#~ msgid "Reconnecting"
-#~ msgstr "Conectando"
-
-#, fuzzy
-#~ msgid "Connection error"
-#~ msgstr "Falha de conexão"
-
-#~ msgid "Connecting"
-#~ msgstr "Conectando"
-
-#~ msgid "Authenticating"
-#~ msgstr "Autenticando"
-
-#~ msgid "Authentication Failed"
-#~ msgstr "Falha de autenticação"
-
-#, fuzzy
-#~ msgid "Connection failed"
-#~ msgstr "Falha de conexão"
-
-#, fuzzy
-#~ msgid "An error occurred while connecting to the chat server: "
-#~ msgstr "Ocorreu um erro enquanto tentava salvar o formulário"
-
-#, fuzzy
-#~ msgid "Click to mention "
-#~ msgstr "CLique para abrir a sala"
-
-#, fuzzy
-#~ msgid "Server:"
-#~ msgstr "Server"
-
-#, fuzzy
-#~ msgid "Authentication failed."
-#~ msgstr "Falha de autenticação"
-
-#~ msgid "Disconnected"
-#~ msgstr "Desconectado"
-
-#, fuzzy
-#~ msgid "Minimize this box"
-#~ msgstr "Minimizado"
-
-#~ msgid "An error occurred while trying to save the form."
-#~ msgstr "Ocorreu um erro enquanto tentava salvar o formulário"
-
-#~ msgid "Error"
-#~ msgstr "Erro"
-
-#~ msgid "Your nickname is already taken"
-#~ msgstr "Seu apelido já foi escolhido"
-
-#, fuzzy
-#~ msgid "View more information on this person"
-#~ msgstr "Mostrar mais informações nessa sala"
-
-#~ msgid "Contact username"
-#~ msgstr "Usuário do contatt"
-
-#~ msgid "Online Contacts"
-#~ msgstr "Contatos online"
-
-#~ msgid "This user has requested an encrypted session."
-#~ msgstr "Usuário pediu uma sessão criptografada."
-
-#~ msgid "Disconnecting"
-#~ msgstr "Desconectando"
-
-#~ msgid "Accept"
-#~ msgstr "Aceitar"
-
-#, fuzzy
-#~ msgid "Decline"
-#~ msgstr "Rejeitar"
-
-#~ msgid "BOSH Service URL:"
-#~ msgstr "URL de serviço BOSH:"
-
-#~ msgid "Connected"
-#~ msgstr "Conectado"
-
-#~ msgid "Attached"
-#~ msgstr "Anexado"
+#~ msgid ""
+#~ "A very large message has been received. This might be due to an attack "
+#~ "meant to degrade the chat performance. Output has been shortened."
+#~ msgstr ""
+#~ "我们接收了一个非常大的信息。这可能是一个攻击，意图以信息的大小降低聊天质"
+#~ "量。所以，我们缩短了输出的信息。"
